@@ -51,3 +51,11 @@ class Endpoints(Resource):
 class Health(Resource):
     def get(self):
         return {'status': 'ok'}
+
+from flask import request
+
+@api.route('/echo')
+class Echo(Resource):
+    def post(self):
+        data = request.get_json(force=True)
+        return {'echo': data}
