@@ -59,4 +59,4 @@ class Health(Resource):
 class Echo(Resource):
     def post(self):
         data = request.get_json(force=True)
-        return {'echo': data}whe
+        return {'echo': data}
