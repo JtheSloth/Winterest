@@ -11,7 +11,12 @@ from unittest.mock import patch
 
 import pytest
 
-import server.endpoints as ep
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+import endpoints as ep
 
 TEST_CLIENT = ep.app.test_client()
 
