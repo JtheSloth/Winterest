@@ -5,9 +5,9 @@ The endpoint called `endpoints` will return all available endpoints.
 # from http import HTTPStatus
 
 from flask import Flask  # , request
-from flask_restx import Resource, Api, fields  # Namespace
-from flask_cors import CORS
+from flask_restx import Resource, Api  # , fields  # Namespace
 from flask import request
+from flask_cors import CORS
 
 # import werkzeug.exceptions as wz
 
@@ -17,7 +17,8 @@ api = Api(
     app,
     version='1.0',
     title='Geographic Database API',
-    description='A REST API for managing geographic data including countries, states, and cities',
+    description='A REST API for managing geographic data including '
+                'countries, states, and cities',
     doc='/swagger'
 )
 
