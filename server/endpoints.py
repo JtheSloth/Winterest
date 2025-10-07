@@ -5,7 +5,7 @@ The endpoint called `endpoints` will return all available endpoints.
 # from http import HTTPStatus
 
 from flask import Flask  # , request
-from flask_restx import Resource, Api  # , fields  # Namespace
+from flask_restx import Resource, Api, fields  # Namespace
 from flask_cors import CORS
 from flask import request
 
@@ -13,7 +13,13 @@ from flask import request
 
 app = Flask(__name__)
 CORS(app)
-api = Api(app)
+api = Api(
+    app,
+    version='1.0',
+    title='Geographic Database API',
+    description='A REST API for managing geographic data including countries, states, and cities',
+    doc='/swagger'
+)
 
 ENDPOINT_EP = '/endpoints'
 ENDPOINT_RESP = 'Available endpoints'
@@ -51,12 +57,26 @@ class Endpoints(Resource):
 
 @api.route('/health')
 class Health(Resource):
+    """
+    Health check endpoint
+    """
+    @api.doc('health_check')
     def get(self):
+        """
+        Check if the API is running
+        """
         return {'status': 'ok'}
 
 
 @api.route('/echo')
 class Echo(Resource):
+    """
+    Echo endpoint for testing POST requests
+    """
+    @api.doc('echo_post')
     def post(self):
+        """
+        Echo back the data sent in the request body
+        """
         data = request.get_json(force=True)
         return {'echo': data}
