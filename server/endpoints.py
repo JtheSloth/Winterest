@@ -46,3 +46,8 @@ class Endpoints(Resource):
         """
         endpoints = sorted(rule.rule for rule in api.app.url_map.iter_rules())
         return {"Available endpoints": endpoints}
+        
+@api.route('/health')
+class Health(Resource):
+    def get(self):
+        return {'status': 'ok'}
