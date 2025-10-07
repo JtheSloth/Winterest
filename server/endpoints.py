@@ -7,6 +7,7 @@ The endpoint called `endpoints` will return all available endpoints.
 from flask import Flask  # , request
 from flask_restx import Resource, Api  # , fields  # Namespace
 from flask_cors import CORS
+from flask import request
 
 # import werkzeug.exceptions as wz
 
@@ -52,10 +53,10 @@ class Health(Resource):
     def get(self):
         return {'status': 'ok'}
 
-from flask import request
+
 
 @api.route('/echo')
 class Echo(Resource):
     def post(self):
         data = request.get_json(force=True)
-        return {'echo': data}
+        return {'echo': data}whe
