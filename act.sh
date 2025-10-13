@@ -1,2 +1,2 @@
 #/bin/bash
-source min-demo-venv/bin/activate
+source Winterest-venv/bin/activate
