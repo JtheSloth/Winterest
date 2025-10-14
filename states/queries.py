@@ -12,6 +12,7 @@ state_cache = {
     1: SAMPLE_STATE,
 }
 
+
 def is_valid_id(_id: str):
     if not isinstance(_id, str):
         return False
@@ -19,8 +20,10 @@ def is_valid_id(_id: str):
         return False
     return True
 
+
 def num_states():
     return len(state_cache)
+
 
 def create(fields: dict):
     if (not isinstance(fields, dict)):
@@ -31,15 +34,21 @@ def create(fields: dict):
     state_cache[new_id] = fields
     return new_id
 
+
 '''Connects to MongoDB database'''
+
+
 def db_connect():
     client = MongoClient("mongodb://localhost:27017/")
     db = client["statesdb"]
     return db
 
+
 """
 Reads documents from the MongoDB
 """
+
+
 def read(state_id=None):
     db = db_connect()
     collection = db["states"]
