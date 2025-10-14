@@ -1,4 +1,4 @@
-from random import randint
+from pymongo import MongoClient
 
 MIN_ID_LEN = 1
 ID = 'id'
@@ -13,9 +13,9 @@ state_cache = {
 }
 
 def is_valid_id(_id: str):
-    if(not isinstance(_id, str)):
+    if not isinstance(_id, str):
         return False
-    if(len(_id) < MIN_ID_LEN):
+    if len(_id) < MIN_ID_LEN:
         return False
     return True
 
@@ -24,17 +24,17 @@ def num_states():
 
 def create(fields: dict):
     if (not isinstance(fields, dict)):
-         raise ValueError(f'Bad type for {type(fields)=}')
+        raise ValueError(f'Bad type for {type(fields)=}')
     if (not fields.get(NAME)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
-        new_id = str(len(state_cache) + 1)
-        state_cache[new_id] = fields
-        return new_id
+    new_id = str(len(state_cache) + 1)
+    state_cache[new_id] = fields
+    return new_id
 
 '''Connects to MongoDB database'''
 def db_connect():
     client = MongoClient("mongodb://localhost:27017/")
-    db = client["statesdb"] 
+    db = client["statesdb"]
     return db
 
 """
