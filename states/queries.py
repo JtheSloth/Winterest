@@ -61,6 +61,7 @@ def read(state_id=None):
         result = collection.find_one({"id": state_id}, {"_id": 0})
         return result
 
+
 def delete(state_id: str):
     if state_id not in state_cache:
         raise ValueError(f'No such state: {state_id}')
