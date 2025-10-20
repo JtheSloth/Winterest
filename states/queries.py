@@ -66,3 +66,4 @@ def delete(state_id: str):
         raise ValueError(f'No such state: {state_id}')
     del state_cache[state_id]
     return True
+
