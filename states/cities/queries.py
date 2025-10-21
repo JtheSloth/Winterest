@@ -68,7 +68,7 @@ def read(city_id=None):
         return list(collection.find({}, {"_id": 0}))
     else:
         # find one city by its 'id'
-        result = collection.find_one(("id": city_id), {"_id": 0})
+        result = collection.find_one({"id": city_id}, {"_id": 0})
         return result
         
 def delete(city_id: str):
