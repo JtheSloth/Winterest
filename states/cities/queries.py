@@ -12,6 +12,10 @@ MAYOR = 'mayor'
 SAMPLE_CITY = {
     NAME: 'New York City',
     POPULATION: '8,478,000',
+    STATE: 'New York',
+    AREA: '469 sq mi',
+    FOUNDED: '1624',
+    MAYOR: 'Eric Adams'
 }
 
 
