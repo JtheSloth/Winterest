@@ -8,54 +8,54 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import queries as qry
 
-def test_num_states():
-    old_count = qry.num_states() #current count of states in database
-    qry.create(qry.SAMPLE_STATE) #adding a new state
-    assert qry.num_states() == old_count + 1 #checking if a new state was created
+def test_num_cities():
+    old_count = qry.num_cities() #current count of cities in database
+    qry.create(qry.SAMPLE_citie) #adding a new citie
+    assert qry.num_cities() == old_count + 1 #checking if a new citie was created
 
     
 def test_good_create():
-    old_count = qry.num_states() #current count of states
-    new_rec_id = qry.create(qry.SAMPLE_STATE) #new record
+    old_count = qry.num_cities() #current count of cities
+    new_rec_id = qry.create(qry.SAMPLE_citie) #new record
     assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
-    assert qry.num_states() == old_count + 1 #sees if the new state was created
+    assert qry.num_cities() == old_count + 1 #sees if the new citie was created
 
 def test_create_bad_name():
-    old_count = qry.num_states() #current count of states
+    old_count = qry.num_cities() #current count of cities
     with pytest.raises(Exception):
         qry.create(None)
-    assert qry.num_states() == old_count #ensuring no invalid state was created
+    assert qry.num_cities() == old_count #ensuring no invalid citie was created
     
 def test_create_bad_param_type():
-    old_count = qry.num_states() #current count of states
+    old_count = qry.num_cities() #current count of cities
     with pytest.raises(Exception):
         qry.create([1, 2, 3])
-    assert qry.num_states() == old_count #make sure number of states did not change
+    assert qry.num_cities() == old_count #make sure number of cities did not change
 
 
 @patch('queries.db_connect')
 def test_read(mock_db_connect):
-    # create a test state
-    new_rec_id = qry.create(qry.SAMPLE_STATE)
+    # create a test city
+    new_rec_id = qry.create(qry.SAMPLE_CITY)
 
     # mock the MongoDB collection
     mock_collection = mock_db_connect.return_value.__getitem__.return_value
-    mock_collection.find_one.return_value = {'id': new_rec_id, 'name': 'New York'}
-    mock_collection.find.return_value = [{'id': '1', 'name': 'New York'}, {'id': '2', 'name': 'California'}]
+    mock_collection.find_one.return_value = {'id': new_rec_id, 'name': 'New York City'}
+    mock_collection.find.return_value = [{'id': '1', 'name': 'New York City'}, {'id': '2', 'name': 'Los Angeles'}]
 
-    # test reading that specific state
+    # test reading that specific citie
     result = qry.read(new_rec_id)
     assert result is not None
     assert result['id'] == new_rec_id
 
-    # test reading all states
-    all_states = qry.read()
-    assert isinstance(all_states, list)
-    assert len(all_states) > 0
+    # test reading all cities
+    all_cities = qry.read()
+    assert isinstance(all_cities, list)
+    assert len(all_cities) > 0
 
 
-def test_bad_test_for_num_states():
-    # test that num_states returns a valid non-negative integer
-    count = qry.num_states()
+def test_bad_test_for_num_cities():
+    # test that num_cities returns a valid non-negative integer
+    count = qry.num_cities()
     assert isinstance(count, int) 
     assert count >= 0 
