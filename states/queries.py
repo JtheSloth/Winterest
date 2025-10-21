@@ -3,9 +3,11 @@ from pymongo import MongoClient
 MIN_ID_LEN = 1
 ID = 'id'
 NAME = 'name'
+POPULATION = 'population'
 
 SAMPLE_STATE = {
-    NAME: 'New York'
+    NAME: 'New York',
+    POPULATION: '19,870,000'
 }
 
 state_cache = {
