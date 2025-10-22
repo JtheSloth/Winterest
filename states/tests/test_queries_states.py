@@ -53,7 +53,7 @@ def test_read(mock_db_connect):
     assert isinstance(all_states, list)
     assert len(all_states) > 0
     
-@patch('states.queries.db_connect', return_value=False, autospec=True)
+@patch('queries_states.db_connect', return_value=False, autospec=True)
 def test_read_cant_connect(mock_db_connect):
     with pytest.raises(ConnectionError):
         states = qry.read()
@@ -65,7 +65,9 @@ def test_bad_test_for_num_states():
     assert isinstance(count, int) 
     assert count >= 0 
 
-@patch('states.queries.db_connect', return_value=True, autospec=True)
-def test_delete(mock_db_connect, temp_state):
-    qry.delete(temp_state)
-    assert temp_state not in qry.read()
+def test_delete():
+    new_rec_id = qry.create(qry.SAMPLE_STATE)
+    assert new_rec_id in qry.state_cache
+    qry.delete(new_rec_id)
+    assert new_rec_id not in qry.state_cache
+    

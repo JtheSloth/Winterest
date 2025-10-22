@@ -57,6 +57,8 @@ Reads documents from the MongoDB
 
 def read(state_id=None):
     db = db_connect()
+    if not db:
+        raise ConnectionError("Failed to connect to database")
     collection = db["states"]
 
     if state_id is None:
