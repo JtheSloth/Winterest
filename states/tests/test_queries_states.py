@@ -52,6 +52,11 @@ def test_read(mock_db_connect):
     all_states = qry.read()
     assert isinstance(all_states, list)
     assert len(all_states) > 0
+    
+@patch('states.queries.db_connect', return_value=False, autospec=True)
+def test_read_cant_connect(mock_db_connect):
+    with pytest.raises(ConnectionError):
+        states = qry.read()
 
 
 def test_bad_test_for_num_states():
