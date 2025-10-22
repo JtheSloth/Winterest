@@ -59,3 +59,8 @@ def test_bad_test_for_num_states():
     count = qry.num_states()
     assert isinstance(count, int) 
     assert count >= 0 
+
+@patch('states.queries.db_connect', return_value=True, autospec=True)
+def test_delete(mock_db_connect, temp_state):
+    qry.delete(temp_state)
+    assert temp_state not in qry.read()
