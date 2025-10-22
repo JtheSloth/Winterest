@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import queries as qry
+import queries_states as qry
 
 def test_num_states():
     old_count = qry.num_states() #current count of states in database
@@ -33,7 +33,7 @@ def test_create_bad_param_type():
     assert qry.num_states() == old_count #make sure number of states did not change
 
 
-@patch('queries.db_connect')
+@patch('queries_states.db_connect')
 def test_read(mock_db_connect):
     # create a test state
     new_rec_id = qry.create(qry.SAMPLE_STATE)

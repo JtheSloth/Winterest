@@ -6,17 +6,17 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import queries as qry
+import queries_cities as qry
 
 def test_num_cities():
     old_count = qry.num_cities() #current count of cities in database
-    qry.create(qry.SAMPLE_citie) #adding a new citie
+    qry.create(qry.SAMPLE_CITY) #adding a new citie
     assert qry.num_cities() == old_count + 1 #checking if a new citie was created
 
     
 def test_good_create():
     old_count = qry.num_cities() #current count of cities
-    new_rec_id = qry.create(qry.SAMPLE_citie) #new record
+    new_rec_id = qry.create(qry.SAMPLE_CITY) #new record
     assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
     assert qry.num_cities() == old_count + 1 #sees if the new citie was created
 
@@ -33,7 +33,7 @@ def test_create_bad_param_type():
     assert qry.num_cities() == old_count #make sure number of cities did not change
 
 
-@patch('queries.db_connect')
+@patch('queries_cities.db_connect')
 def test_read(mock_db_connect):
     # create a test city
     new_rec_id = qry.create(qry.SAMPLE_CITY)

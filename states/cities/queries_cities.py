@@ -60,7 +60,7 @@ Reads documents from the MongoDB
 """
 
 def read(city_id=None):
-    db = db_connect
+    db = db_connect()
     collection = db["cities"]
     
     if city_id is None:
