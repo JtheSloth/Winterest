@@ -54,8 +54,24 @@ def test_read(mock_db_connect):
     assert len(all_cities) > 0
 
 
+@patch('queries_cities.db_connect', return_value=False, autospec=True)
+def test_read_cant_connect(mock_db_connect):
+    with pytest.raises(ConnectionError):
+        cities = qry.read()
+
+
 def test_bad_test_for_num_cities():
     # test that num_cities returns a valid non-negative integer
     count = qry.num_cities()
-    assert isinstance(count, int) 
-    assert count >= 0 
+    assert isinstance(count, int)
+    assert count >= 0
+
+
+def test_delete():
+    # create a test city to delete
+    new_rec_id = qry.create(qry.SAMPLE_CITY)
+    assert new_rec_id in qry.city_cache
+    # delete the city
+    qry.delete(new_rec_id)
+    # verify it's no longer in the cache
+    assert new_rec_id not in qry.city_cache 

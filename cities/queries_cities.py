@@ -61,8 +61,10 @@ Reads documents from the MongoDB
 
 def read(city_id=None):
     db = db_connect()
+    if not db:
+        raise ConnectionError("Failed to connect to database")
     collection = db["cities"]
-    
+
     if city_id is None:
         # return all cities as a list
         return list(collection.find({}, {"_id": 0}))
