@@ -46,18 +46,19 @@ def create(fields: dict):
     return new_id
 
 
-    '''Connects to MongoDB database'''
+'''Connects to MongoDB database'''
 
 
 def db_connect():
     client = MongoClient("mongodb://localhost:27017/")
     db = client["citiedb"]
     return db
-    
-    
+
+
 """
 Reads documents from the MongoDB
 """
+
 
 def read(city_id=None):
     db = db_connect()
@@ -72,7 +73,8 @@ def read(city_id=None):
         # find one city by its 'id'
         result = collection.find_one({"id": city_id}, {"_id": 0})
         return result
-        
+
+
 def delete(city_id: str):
     if city_id not in city_cache:
         raise ValueError(f'No such city: {city_id}')
