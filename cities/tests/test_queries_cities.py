@@ -101,3 +101,26 @@ def test_delete(temp_city,city_delta):
         qry.delete(temp_city)
     # verify it's no longer in the cache
     assert temp_city not in qry.city_cache
+
+def test_city_has_valid_state():
+    city = qry.SAMPLE_CITY
+    state = city.get(qry.STATE, "").strip()
+
+    # Ensure 'state' field exists and has a non-empty string
+    assert state, "City record should contain a non-empty 'state' value"
+    assert isinstance(state, str), "'state' should be a string"
+    
+    invalid_values = {"unknown", "n/a", "none", "null", ""}
+    assert state.lower() not in invalid_values, f"Invalid state value: {state}"
+
+    valid_states = {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+        "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+        "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+        "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+        "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+        "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    }
+    assert state in valid_states, f"'{state}' is not a recognized valid US state"
