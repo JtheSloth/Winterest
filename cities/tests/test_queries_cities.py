@@ -25,6 +25,7 @@ def reset_cache():
     if cache is not None:
         cache.clear()
 
+#checks if number of cities has changed according to argument 
 @pytest.fixture
 def city_delta():
     @contextmanager
@@ -40,41 +41,26 @@ def city_delta():
 def test_num_cities(city_delta):
     with city_delta(+1):  # expect +1 change
         qry.create(qry.SAMPLE_CITY)
-    '''
-    old_count = qry.num_cities() #current count of cities in database
-    qry.create(qry.SAMPLE_CITY) #adding a new citie
-    assert qry.num_cities() == old_count + 1 #checking if a new city was created'''
 
     
 def test_good_create(city_delta):
     with city_delta(+1):  # expect +1 change
         new_rec_id = qry.create(qry.SAMPLE_CITY) #new record
         assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
-    '''
-    old_count = qry.num_cities() #current count of cities
-    new_rec_id = qry.create(qry.SAMPLE_CITY) #new record
-    assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
-    assert qry.num_cities() == old_count + 1 #sees if the new citie was created'''
+
+
 def test_create_bad_name(city_delta):
     with city_delta():
         with pytest.raises(Exception):
             qry.create(None)
-    '''
-    old_count = qry.num_cities() #current count of cities
-    with pytest.raises(Exception):
-        qry.create(None)
-    assert qry.num_cities() == old_count #ensuring no invalid city was created'''
+
     
 def test_create_bad_param_type(city_delta):
     with city_delta():
         with pytest.raises(Exception):
             qry.create([1, 2, 3])
-    '''
-    old_count = qry.num_cities() #current count of cities
-    with pytest.raises(Exception):
-        qry.create([1, 2, 3])
-    assert qry.num_cities() == old_count #make sure number of cities did not change
-    '''
+
+
 @patch('queries_cities.db_connect')
 def test_read(mock_db_connect, temp_city):
 
