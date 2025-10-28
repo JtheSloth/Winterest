@@ -27,6 +27,14 @@ def is_valid_id(_id: str):
     return True
 
 
+def is_valid_population(_population):
+    if not isinstance(_population, int):
+        return False
+    if _population < 0:
+        return False
+    return True
+
+
 def num_states():
     return len(state_cache)
 
