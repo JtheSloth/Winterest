@@ -53,6 +53,7 @@ def test_good_create(state_delta):
         new_rec_id = qry.create(qry.SAMPLE_STATE) #new record
         assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
         assert qry.is_valid_population(qry.SAMPLE_STATE["population"]) #check if the population entered is valid
+        assert qry.is_valid_governor(qry.SAMPLE_STATE["governor"]) #check if the governor entered is valid
 
     '''
     old_count = qry.num_states() #current count of states
