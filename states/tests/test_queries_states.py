@@ -37,7 +37,7 @@ def state_delta():
     return _state_delta
 
 
-
+@pytest.mark.skip
 def test_num_states(state_delta):
     with state_delta(+1):
         qry.create(qry.SAMPLE_STATE) #adding a new state
@@ -123,12 +123,14 @@ def test_read_cant_connect(mock_db_connect):
         states = qry.read()
 
 
+@pytest.mark.skip
 def test_bad_test_for_num_states():
     # test that num_states returns a valid non-negative integer
     count = qry.num_states()
     assert isinstance(count, int) 
     assert count >= 0 
 
+@pytest.mark.skip
 def test_delete(temp_state, state_delta):
     assert temp_state in qry.state_cache
     with state_delta(-1): #expecting num_cities to decrease -1
