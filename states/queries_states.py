@@ -9,7 +9,7 @@ GOVERNOR = 'governor'
 
 SAMPLE_STATE = {
     NAME: 'New York',
-    POPULATION: '19,870,000',
+    POPULATION: 19870000,
     CAPITAL: 'Albany',
     GOVERNOR: 'Kathy Hochul'
 }
