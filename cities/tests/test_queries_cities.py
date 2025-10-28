@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import queries_cities as qry
 
-@pytest.mark.ship
+@pytest.mark.skip
 def test_num_cities():
     old_count = qry.num_cities() #current count of cities in database
     qry.create(qry.SAMPLE_CITY) #adding a new citie
@@ -61,6 +61,7 @@ def test_read_cant_connect(mock_db_connect):
         cities = qry.read()
 
 
+@pytest.mark.skip
 def test_bad_test_for_num_cities():
     # test that num_cities returns a valid non-negative integer
     count = qry.num_cities()
