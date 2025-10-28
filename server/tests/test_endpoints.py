@@ -29,14 +29,14 @@ def test_hello():
 def test_echo_roundtrip_no_patch():
     payload = {"msg": "hi", "n": 7}
     resp = TEST_CLIENT.post("/echo", json=payload)
-    assert resp,status_code == OK
+    assert resp.status_code == OK
     assert resp.get_json() == {"echo": payload}
     
 @patch("endpoints.request.get_json")
 def test_echo_uses_request_get_json_once(mock_get_json):
     # First patch test. forcing specific return value
     mock_get_json.return_value = {"foo": "bar"}
-    resp = TEST_CLIENT.post("/echo")
+    resp = TEST_CLIENT.post("/echo", json={})
     assert resp.status_code == OK
     assert resp.get_json() == {"echo": {"foo": "bar"}}
     mock_get_json.assert_called_once_with(force=True)
@@ -44,7 +44,7 @@ def test_echo_uses_request_get_json_once(mock_get_json):
 @patch("endpoints.request.get_json", return_value=None)
 def test_echo_handles_none_payload(mock_get_json):
     # Second patch test for invalid JSON
-    resp = TEST_CLIENT.post("/echo")
+    resp = TEST_CLIENT.post("/echo", json={})
     assert resp.status_code == OK
     assert resp.get_json() == {"echo": None}
     mock_get_json.assert_called_once_with(force=True)
