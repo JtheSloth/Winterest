@@ -114,4 +114,4 @@ def test_delete(temp_city,city_delta):
         # delete the city
         qry.delete(temp_city)
     # verify it's no longer in the cache
-    assert temp_city not in qry.city_cache 
+    assert temp_city not in qry.city_cache
