@@ -35,6 +35,14 @@ def is_valid_population(_population):
     return True
 
 
+def is_valid_governor(_governor: str):
+    if not isinstance(_governor, str):
+        return False
+    if len(_governor) < MIN_ID_LEN:
+        return False
+    return True
+
+
 def num_states():
     return len(state_cache)
 
