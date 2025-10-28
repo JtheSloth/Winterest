@@ -66,11 +66,73 @@ def test_bad_test_for_num_cities():
     count = qry.num_cities()
     assert isinstance(count, int)
     assert count >= 0
-
-@pytest.mark.skip
-def test_delete():
     
-    new_rec_id = qry.create(qry.SAMPLE_CITY)
-    assert new_rec_id in qry.city_cache
-    qry.delete(new_rec_id)
-    assert new_rec_id not in qry.city_cache 
+@pytest.mark.skip
+def test_delete(temp_city,city_delta):
+    
+    assert temp_city in qry.city_cache
+    with city_delta(-1): #expecting num_cities to decrease -1
+        # delete the city
+        qry.delete(temp_city)
+    # verify it's no longer in the cache
+    assert temp_city not in qry.city_cache
+
+def test_city_has_valid_state():
+    city = qry.SAMPLE_CITY
+    state = city.get(qry.STATE, "").strip()
+
+    # Ensure 'state' field exists and has a non-empty string
+    assert state, "City record should contain a non-empty 'state' value"
+    assert isinstance(state, str), "'state' should be a string"
+    
+    invalid_values = {"unknown", "n/a", "none", "null", ""}
+    assert state.lower() not in invalid_values, f"Invalid state value: {state}"
+
+    valid_states = {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
+        "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
+        "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+        "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+        "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+        "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    }
+    assert state in valid_states, f"'{state}' is not a recognized valid US state"
+
+@pytest.fixture
+def db_failure():
+    with patch('queries_cities.db_connect') as mock_db_connect:
+        mock_db = mock_db_connect.return_value
+        mock_db.__getitem__.side_effect = Exception("Database failure")
+        yield mock_db_connect
+
+def test_read_handles_db_failure(db_failure):
+    with pytest.raises(Exception) as exc_info:
+        qry.read("123")
+    assert "Database failure" in str(exc_info.value)
+
+
+def test_city_has_valid_mayor():
+    city = qry.SAMPLE_CITY
+    mayor = city.get(qry.MAYOR, "")
+
+    # Ensure 'state' field exists and has a non-empty string
+    assert mayor, "City record should contain a non-rempty 'mayor' value"
+    assert isinstance(mayor, str), "'mayor' should be a string"
+
+    # Check that mayor name is not a placeholder or invalid value
+    invalid_values = {"unknown", "n/a", "none", "null", "tbd", "vacant", ""}
+    assert mayor.lower() not in invalid_values, f"Invalid mayor name: {mayor}"
+
+    test_city = {
+        qry.NAME: 'Test City',
+        qry.POPULATION: '1,000',
+        qry.STATE: 'Arkansas',
+        qry.MAYOR: 'Richard'
+    }
+
+    test_mayor = test_city.get(qry.MAYOR)
+    assert test_mayor == 'Richard', f"Expected mayor 'Richard, got '{test_mayor}'"
+    assert isinstance(test_mayor, str), "Mayor name should be a string"
+    assert len(test_mayor) > 0, "Mayor name should not be empty"

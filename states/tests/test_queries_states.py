@@ -37,7 +37,6 @@ def state_delta():
     return _state_delta
 
 
-@pytest.mark.skip
 def test_num_states(state_delta):
     with state_delta(+1):
         qry.create(qry.SAMPLE_STATE) #adding a new state
