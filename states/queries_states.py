@@ -42,8 +42,10 @@ def num_states():
 def create(fields: dict):
     if (not isinstance(fields, dict)):
         raise ValueError(f'Bad type for {type(fields)=}')
-    if (not fields.get(NAME)):
+    if (not fields.get(NAME) or not isinstance(fields[NAME], str)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
+    if (not fields.get(POPULATION) or not isinstance(fields[POPULATION], int)):
+        raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
     new_id = str(len(state_cache) + 1)
     state_cache[new_id] = fields
     return new_id

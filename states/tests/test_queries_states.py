@@ -25,16 +25,21 @@ def test_good_create():
 def test_create_bad_name():
     old_count = qry.num_states() #current count of states
     with pytest.raises(Exception):
-        qry.create(None)
+        qry.create({'id': '1', 'name': 5, 'population': 19870000, 'capital': 'Albany', 'governor': 'Kathy Hochul'}) #test with an integer as the name
     assert qry.num_states() == old_count #ensuring no invalid state was created
     
+def test_create_bad_population():
+    old_count = qry.num_states() #current count of states
+    with pytest.raises(Exception):
+        qry.create({'id': '1', 'name': 'New York', 'population': '19870000', 'capital': 'Albany', 'governor': 'Kathy Hochul'}) #test with a string as the population
+    assert qry.num_states() == old_count #ensuring no invalid state was created
 
 def test_create_bad_param_type():
     old_count = qry.num_states() #current count of states
     with pytest.raises(Exception):
         qry.create([1, 2, 3])
     assert qry.num_states() == old_count #make sure number of states did not change
-    
+
 
 @patch('queries_states.db_connect')
 def test_read(mock_db_connect):
