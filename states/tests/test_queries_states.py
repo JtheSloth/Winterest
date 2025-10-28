@@ -78,4 +78,3 @@ def test_delete():
     assert new_rec_id in qry.state_cache
     qry.delete(new_rec_id)
     assert new_rec_id not in qry.state_cache
-    
