@@ -138,7 +138,7 @@ def test_read_handles_db_failure(db_failure):
     assert "Database failure" in str(exc_info.value)
 
 
-def test_city_had_valid_mayor():
+def test_city_has_valid_mayor():
     city = qry.SAMPLE_CITY
     mayor = city.get(qry.MAYOR, "")
 
