@@ -124,3 +124,15 @@ def test_city_has_valid_state():
         "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
     }
     assert state in valid_states, f"'{state}' is not a recognized valid US state"
+
+@pytest.fixture
+def db_failure():
+    with patch('queries_cities.db_connect') as mock_db_connect:
+        mock_db = mock_db_connect.return_value
+        mock_db.__getitem__.side_effect = Exception("Database failure")
+        yield mock_db_connect
+
+def test_read_handles_db_failure(db_failure):
+    with pytest.raises(Exception) as exc_info:
+        qry.read("123")
+    assert "Database failure" in str(exc_info.value)
