@@ -136,3 +136,28 @@ def test_read_handles_db_failure(db_failure):
     with pytest.raises(Exception) as exc_info:
         qry.read("123")
     assert "Database failure" in str(exc_info.value)
+
+
+def test_city_had_valid_mayor():
+    city = qry.SAMPLE_CITY
+    mayor = city.get(qry.MAYOR, "")
+
+    # Ensure 'state' field exists and has a non-empty string
+    assert mayor, "City record should contain a non-rempty 'mayor' value"
+    assert isinstance(mayor, str), "'mayor' should be a string"
+
+    # Check that mayor name is not a placeholder or invalid value
+    invalid_values = {"unknown", "n/a", "none", "null", "tbd", "vacant", ""}
+    assert mayor.lower() not in invalid_values, f"Invalid mayor name: {mayor}"
+
+    test_city = {
+        qry.NAME: 'Test City',
+        qry.POPULATION: '1,000',
+        qry.STATE: 'Arkansas',
+        qry.MAYOR: 'Richard'
+    }
+
+    test_mayor = test_city.get(qry.MAYOR)
+    assert test_mayor == 'Richard', f"Expected mayor 'Richard, got '{test_mayor}'"
+    assert isinstance(test_mayor, str), "Mayor name should be a string"
+    assert len(test_mayor) > 0, "Mayor name should not be empty"
