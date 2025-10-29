@@ -52,6 +52,8 @@ def create(fields: dict):
         raise ValueError(f'Bad type for {type(fields)=}')
     if (not fields.get(NAME) or not isinstance(fields[NAME], str)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
+    if (not fields.get(CAPITAL) or not isinstance(fields[NAME], str)):
+        raise ValueError(f'Bad value for {fields.get(NAME)=}')
     if (not fields.get(POPULATION) or not isinstance(fields[POPULATION], int)):
         raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
     new_id = str(len(state_cache) + 1)
