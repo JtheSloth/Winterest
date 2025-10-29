@@ -122,10 +122,10 @@ def test_read_cant_connect(mock_db_connect):
         states = qry.read()
         
         
-def test_create_bad_governor(state_delta):
+def test_create_bad_capital(state_delta):
     with state_delta():
         with pytest.raises(Exception):
-            qry.create({'id': '1', 'name': 'New York', 'population': 19870000, 'capital': 'Albany', 'governor': 2019})
+            qry.create({'id': '1', 'name': 'New York', 'population': 19870000, 'capital': 293745, 'governor': 'Kathy Hochul'})
 
 
 @pytest.mark.skip
