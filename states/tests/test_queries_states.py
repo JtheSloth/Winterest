@@ -120,7 +120,7 @@ def test_read(mock_db_connect, temp_state):
 def test_read_cant_connect(mock_db_connect):
     with pytest.raises(ConnectionError):
         states = qry.read()
-        
+                
         
 def test_create_bad_capital(state_delta):
     with state_delta():
@@ -142,6 +142,10 @@ def test_delete(temp_state, state_delta):
         # delete the state
         qry.delete(temp_state)
     assert temp_state not in qry.state_cache
+    
+def test_delete_not_there():
+    with pytest.raises(ValueError):
+        qry.delete('a state that has not yet been created')
 
 '''
 def test_delete(temp_city,city_delta):
