@@ -1,3 +1,4 @@
+from copy import deepcopy
 from unittest.mock import patch
 import pytest
 
@@ -7,6 +8,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import queries_cities as qry
+def create_temp_city():
+    return deepcopy(qry.SAMPLE_CITY)
+
+
+def temp_city():
+    temp_city = create_temp_city()
+    new_id = qry.create(create_temp_city())
+    yield new_id
+    try:
+        qry.delete(new_id)
+    except ValueError:
+        print('The record has already been deleted.')
+
 
 @pytest.mark.skip
 def test_num_cities():
