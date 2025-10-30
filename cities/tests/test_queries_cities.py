@@ -11,7 +11,7 @@ import queries_cities as qry
 def create_temp_city():
     return deepcopy(qry.SAMPLE_CITY)
 
-
+@pytest.fixture(scope='function')
 def temp_city():
     temp_city = create_temp_city()
     new_id = qry.create(create_temp_city())
@@ -20,6 +20,7 @@ def temp_city():
         qry.delete(new_id)
     except ValueError:
         print('The record has already been deleted.')
+
 
 
 @pytest.mark.skip
