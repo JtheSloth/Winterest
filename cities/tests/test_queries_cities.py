@@ -22,6 +22,12 @@ def temp_city():
         print('The record has already been deleted.')
 
 
+@pytest.fixture(scope='function')
+def temp_city_no_delete():
+    temp_city = create_temp_city()
+    new_id = qry.create(create_temp_city())
+    return temp_city
+
 
 @pytest.mark.skip
 def test_num_cities():
