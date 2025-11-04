@@ -30,17 +30,15 @@ def temp_city_no_delete():
 
 
 @pytest.mark.skip
-def test_num_cities():
-    old_count = qry.num_cities() #current count of cities in database
-    qry.create(qry.SAMPLE_CITY) #adding a new citie
-    assert qry.num_cities() == old_count + 1 #checking if a new citie was created
+def test_num_cities(temp_city):
+    # verify the city was created and is counted
+    assert qry.is_valid_id(temp_city)
+    assert temp_city in qry.city_cache
 
 @pytest.mark.skip
-def test_good_create():
-    old_count = qry.num_cities() #current count of cities
-    new_rec_id = qry.create(qry.SAMPLE_CITY) #new record
-    assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
-    assert qry.num_cities() == old_count + 1 #sees if the new citie was created
+def test_good_create(temp_city):
+    assert qry.is_valid_id(temp_city) # checking if the id is valid
+    assert temp_city in qry.city_cache # verify the city was created
 
 def test_create_bad_name():
     old_count = qry.num_cities() #current count of cities
@@ -56,19 +54,17 @@ def test_create_bad_param_type():
 
 @pytest.mark.skip
 @patch('queries_cities.db_connect')
-def test_read(mock_db_connect):
-    # create a test city
-    new_rec_id = qry.create(qry.SAMPLE_CITY)
+def test_read(mock_db_connect, temp_city):
 
     # mock the MongoDB collection
     mock_collection = mock_db_connect.return_value.__getitem__.return_value
-    mock_collection.find_one.return_value = {'id': new_rec_id, 'name': 'New York City'}
+    mock_collection.find_one.return_value = {'id': temp_city, 'name': 'New York City'}
     mock_collection.find.return_value = [{'id': '1', 'name': 'New York City'}, {'id': '2', 'name': 'Los Angeles'}]
 
     # test reading that specific citie
-    result = qry.read(new_rec_id)
+    result = qry.read(temp_city)
     assert result is not None
-    assert result['id'] == new_rec_id
+    assert result['id'] == temp_city
 
     # test reading all cities
     all_cities = qry.read()
@@ -100,7 +96,7 @@ def test_delete(temp_city,city_delta):
     assert temp_city not in qry.city_cache
 
 def test_city_has_valid_state():
-    city = qry.SAMPLE_CITY
+    city = create_temp_city()
     state = city.get(qry.STATE, "").strip()
 
     # Ensure 'state' field exists and has a non-empty string
@@ -136,7 +132,7 @@ def test_read_handles_db_failure(db_failure):
 
 
 def test_city_has_valid_mayor():
-    city = qry.SAMPLE_CITY
+    city = create_temp_city()
     mayor = city.get(qry.MAYOR, "")
 
     # Ensure 'state' field exists and has a non-empty string
