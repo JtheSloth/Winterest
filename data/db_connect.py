@@ -17,7 +17,7 @@ client = None
 
 MONGO_ID = '_id'
 
-def needs_db(fn, *args, **kwargs):
+def needs_db(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         global client
@@ -25,6 +25,19 @@ def needs_db(fn, *args, **kwargs):
             connect_db()
         return fn(*args, **kwargs)
     return wrapper
+
+def retry_mongo(retries=3):   # (1)
+    def deco(fn):             # (2)
+        @wraps(fn)
+        def wrapper(*args, **kwargs):  # (3)
+            for attempt in range(retries):
+                try:
+                    return fn(*args, **kwargs)
+                except (AutoReconnect, NetworkTimeout):
+                    if attempt == retries - 1:
+                        raise
+        return wrapper
+    return deco
 
 def connect_db():
     """
@@ -57,6 +70,7 @@ def convert_mongo_id(doc: dict):
         # Convert mongo ID to a string so it works as JSON
         doc[MONGO_ID] = str(doc[MONGO_ID])
 
+@retry_mongo
 @needs_db
 def create(collection, doc, db=SE_DB):
     """
@@ -66,6 +80,7 @@ def create(collection, doc, db=SE_DB):
     ret = client[db][collection].insert_one(doc)
     return str(ret.inserted_id)
 
+@retry_mongo
 @needs_db
 def read_one(collection, filt, db=SE_DB):
     """
@@ -76,6 +91,7 @@ def read_one(collection, filt, db=SE_DB):
         convert_mongo_id(doc)
         return doc
 
+@retry_mongo
 @needs_db
 def delete(collection: str, filt: dict, db=SE_DB):
     """
@@ -85,14 +101,12 @@ def delete(collection: str, filt: dict, db=SE_DB):
     del_result = client[db][collection].delete_one(filt)
     return del_result.deleted_count
 
+@retry_mongo
 @needs_db
 def update(collection, filters, update_dict, db=SE_DB):
     return client[db][collection].update_one(filters, {'$set': update_dict})
 
-@needs_db
-def update(collection, filters, update_dict, db=SE_DB):
-    return client[db][collection].update_one(filters, {'$set': update_dict})
-
+@retry_mongo
 @needs_db
 def read(collection, db=SE_DB, no_id=True) -> list:
     """
