@@ -1,3 +1,4 @@
+from copy import deepcopy
 from unittest.mock import patch
 import pytest
 from contextlib import contextmanager
@@ -9,9 +10,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import queries_states as qry
 
+def create_temp_state():
+    return deepcopy(qry.SAMPLE_STATE)
+
 @pytest.fixture(scope='function')
 def temp_state():
-    new_rec_id = qry.create(qry.SAMPLE_STATE)
+    new_rec_id = qry.create(create_temp_state())
     yield new_rec_id
     try:
         qry.delete(new_rec_id)
@@ -39,26 +43,27 @@ def state_delta():
 
 def test_num_states(state_delta):
     with state_delta(+1):
-        qry.create(qry.SAMPLE_STATE) #adding a new state
+        qry.create(create_temp_state()) #adding a new state
 
     '''
     old_count = qry.num_states() #current count of states in database
-    qry.create(qry.SAMPLE_STATE) #adding a new state
+    qry.create(create_temp_state()) #adding a new state
     assert qry.num_states() == old_count + 1 #checking if a new state was created'''
 
     
 def test_good_create(state_delta):
     with state_delta(+1):
-        new_rec_id = qry.create(qry.SAMPLE_STATE) #new record
+        temp_state_data = create_temp_state()
+        new_rec_id = qry.create(temp_state_data) #new record
         assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
-        assert qry.is_valid_population(qry.SAMPLE_STATE["population"]) #check if the population entered is valid
-        assert qry.is_valid_governor(qry.SAMPLE_STATE["governor"]) #check if the governor entered is valid
+        assert qry.is_valid_population(temp_state_data["population"]) #check if the population entered is valid
+        assert qry.is_valid_governor(temp_state_data["governor"]) #check if the governor entered is valid
 
     '''
     old_count = qry.num_states() #current count of states
-    new_rec_id = qry.create(qry.SAMPLE_STATE) #new record
+    new_rec_id = qry.create(create_temp_state()) #new record
     assert qry.is_valid_id(new_rec_id) #checking if the new id created is a valid one
-    assert qry.is_valid_population(qry.SAMPLE_STATE["population"]) #check if the population entered is valid
+    assert qry.is_valid_population(temp_state_data["population"]) #check if the population entered is valid
     assert qry.num_states() == old_count + 1 #sees if the new state was created'';'''
 
 
