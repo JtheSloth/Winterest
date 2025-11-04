@@ -62,25 +62,23 @@ def connect_db():
     """
     global client
     if client is None:  # not connected yet!
-        print('Setting client because it is None.')
         if os.environ.get('CLOUD_MONGO', LOCAL) == CLOUD:
             password = os.environ.get('MONGO_PASSWD')
             if not password:
                 raise ValueError('You must set your password '
                                  + 'to use Mongo in the cloud.')
-            print('Connecting to Mongo in the cloud.')
             client = pm.MongoClient(f'mongodb+srv://gcallah:{password}'
                                     + '@koukoumongo1.yud9b.mongodb.net/'
                                     + '?retryWrites=true&w=majority')
         else:
-            print("Connecting to Mongo locally.")
             client = pm.MongoClient()
     return client
 
 
-def convert_mongo_id(doc: dict):
+def convert_mongo_id(doc: dict | None):
+    if not doc:
+        return
     if MONGO_ID in doc:
-        # Convert mongo ID to a string so it works as JSON
         doc[MONGO_ID] = str(doc[MONGO_ID])
 
 @handle_errors
@@ -122,7 +120,8 @@ def delete(collection: str, filt: dict, db=SE_DB):
 @retry_mongo
 @needs_db
 def update(collection, filters, update_dict, db=SE_DB):
-    return client[db][collection].update_one(filters, {'$set': update_dict})
+    res = client[db][collection].update_one(filters, {'$set': update_dict})
+    return res.modified_count
 
 @handle_errors
 @retry_mongo
