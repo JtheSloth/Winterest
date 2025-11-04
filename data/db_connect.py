@@ -7,6 +7,7 @@ import os
 import pymongo as pm
 
 from functools import wraps
+from pymongo.errors import AutoReconnect, NetworkTimeout
 
 LOCAL = "0"
 CLOUD = "1"
@@ -26,10 +27,10 @@ def needs_db(fn):
         return fn(*args, **kwargs)
     return wrapper
 
-def retry_mongo(retries=3):   # (1)
-    def deco(fn):             # (2)
+def retry_mongo(retries=3):   
+    def deco(fn):             
         @wraps(fn)
-        def wrapper(*args, **kwargs):  # (3)
+        def wrapper(*args, **kwargs):  
             for attempt in range(retries):
                 try:
                     return fn(*args, **kwargs)
@@ -38,6 +39,18 @@ def retry_mongo(retries=3):   # (1)
                         raise
         return wrapper
     return deco
+
+class DBError(Exception):
+    pass
+
+def handle_errors(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except pm.errors.PyMongoError as e:
+            raise DBError(str(e)) from e
+    return wrapper
 
 def connect_db():
     """
@@ -70,8 +83,9 @@ def convert_mongo_id(doc: dict):
         # Convert mongo ID to a string so it works as JSON
         doc[MONGO_ID] = str(doc[MONGO_ID])
 
-@retry_mongo
+@retry_mongo()
 @needs_db
+@handle_errors
 def create(collection, doc, db=SE_DB):
     """
     Insert a single doc into collection.
@@ -80,19 +94,22 @@ def create(collection, doc, db=SE_DB):
     ret = client[db][collection].insert_one(doc)
     return str(ret.inserted_id)
 
-@retry_mongo
+@retry_mongo()
 @needs_db
+@handle_errors
 def read_one(collection, filt, db=SE_DB):
     """
     Find with a filter and return on the first doc found.
     Return None if not found.
     """
-    for doc in client[db][collection].find(filt):
-        convert_mongo_id(doc)
-        return doc
+    doc = client[db][collection].find_one(filt)
+    if doc:
+        convert_mongo_id(doc) 
+    return doc   
 
-@retry_mongo
+@retry_mongo()
 @needs_db
+@handle_errors
 def delete(collection: str, filt: dict, db=SE_DB):
     """
     Find with a filter and return on the first doc found.
@@ -101,13 +118,15 @@ def delete(collection: str, filt: dict, db=SE_DB):
     del_result = client[db][collection].delete_one(filt)
     return del_result.deleted_count
 
-@retry_mongo
+@retry_mongo()
 @needs_db
+@handle_errors
 def update(collection, filters, update_dict, db=SE_DB):
     return client[db][collection].update_one(filters, {'$set': update_dict})
 
-@retry_mongo
+@retry_mongo()
 @needs_db
+@handle_errors
 def read(collection, db=SE_DB, no_id=True) -> list:
     """
     Returns a list from the db.
