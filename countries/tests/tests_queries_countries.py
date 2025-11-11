@@ -30,3 +30,20 @@ def test_create_bad_name():
         qry.create(None)
     # ensuring no invalid country was created
     assert qry.num_countries() == old_count
+
+
+def test_create_bad_population():
+    old_count = qry.num_countries()  # current count of countries
+    with pytest.raises(Exception):
+        qry.create({
+            'name': 'Test Country',
+            'population': 'not a number',
+            'continent': 'Europe',
+            'capital': 'Test City',
+            'gdp': '1.2 T',
+            'area': '1000 sq mi',
+            'founded': '1900',
+            'president': 'Test Person'
+        })
+    # ensuring no invalid country was created
+    assert qry.num_countries() == old_count
