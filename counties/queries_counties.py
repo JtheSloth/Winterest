@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from functools import wraps
 
 MIN_ID_LEN = 1
 ID = 'id'
@@ -80,15 +81,27 @@ def db_connect():
     return db
 
 
+'''Decorator to ensure database connection'''
+
+
+def ensure_db_connection(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        db = db_connect()
+        if not db:
+            raise ConnectionError("Failed to connect to database")
+        return func(*args, **kwargs)
+    return wrapper
+
+
 """
 Reads documents from the MongoDB
 """
 
 
+@ensure_db_connection
 def read(county_id=None):
     db = db_connect()
-    if not db:
-        raise ConnectionError("Failed to connect to database")
     collection = db["counties"]
 
     if county_id is None:
