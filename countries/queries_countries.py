@@ -27,6 +27,26 @@ country_cache = {
     1: SAMPLE_COUNTRY
 }
 
+
+def is_valid_id(_id: str):
+    if not isinstance(_id, str):
+        return False
+    if len(_id) < MIN_ID_LEN:
+        return False
+    return True
+
+def is_valid_population(_population):
+    if not isinstance(_population, int):
+        return False
+    if _population < 0:
+        return False
+    return True
+
+
+def num_countries():
+    return len(country_cache)
+
+
 def create(fields: dict):
     if (not isinstance(fields, dict)):
         raise ValueError(f'Bad type for {type(fields)=}')
@@ -49,3 +69,39 @@ def create(fields: dict):
     new_id = str(len(state_cache) + 1)
     state_cache[new_id] = fields
     return new_id
+
+
+'''Connects to MongoDB database'''
+
+
+def db_connect():
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client["countriesdb"]
+    return db
+
+
+"""
+Reads documents from the MongoDB
+"""
+
+
+def read(country_id=None):
+    db = db_connect()
+    if not db:
+        raise ConnectionError("Failed to connect to database")
+    collection = db["countriesbd"]
+
+    if country_id is None:
+        # return all countries as a list
+        return list(collection.find({}, {"_id": 0}))
+    else:
+        # find one country by its 'id'
+        result = collection.find_one({"id": country_id}, {"_id": 0})
+        return result
+
+
+def delete(country_id: str):
+    if country_id not in country_cache:
+        raise ValueError(f'No such country: {country_id}')
+    del state_cache[country_id]
+    return True
