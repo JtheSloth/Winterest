@@ -32,6 +32,40 @@ def is_valid_id(_id: str):
 def num_counties():
     return len(county_cache)
 
+def is_valid_population(_population):
+    if not isinstance(_population, int):
+        return False
+    if _population < 0:
+        return False
+    return True
+
+def create(fields: dict):
+
+    if not isinstance(fields, dict):
+        raise ValueError(f'Bad type for {type(fields)=}')
+
+    if not fields.get(NAME) or not isinstance(fields[NAME], str):
+        raise ValueError(f'Bad value for {fields.get(NAME)=}')
+
+    if not fields.get(POPULATION) or not isinstance(fields[POPULATION], int):
+        raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
+
+    if not fields.get(STATE) or not isinstance(fields[STATE], str):
+        raise ValueError(f'Bad value for {fields.get(STATE)=}')
+
+    if not fields.get(AREA) or not isinstance(fields[AREA], str):
+        raise ValueError(f'Bad value for {fields.get(AREA)=}')
+
+    if not fields.get(FOUNDED) or not isinstance(fields[FOUNDED], str):
+        raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
+
+    if not fields.get(COUNTY_SEAT) or not isinstance(fields[COUNTY_SEAT], str):
+        raise ValueError(f'Bad value for {fields.get(COUNTY_SEAT)=}')
+
+    new_id = str(len(county_cache) + 1)
+    county_cache[new_id] = fields
+    return new_id
+
 
 '''Connects to MongoDB database'''
 
