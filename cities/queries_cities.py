@@ -51,7 +51,7 @@ def create(fields: dict):
 
 def db_connect():
     client = MongoClient("mongodb://localhost:27017/")
-    db = client["citiedb"]
+    db = client["citydb"]
     return db
 
 
