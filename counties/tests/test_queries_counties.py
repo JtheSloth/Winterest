@@ -40,3 +40,16 @@ def test_create_bad_param_type():
 def test_read_cant_connect(mock_db_connect):
     with pytest.raises(ConnectionError):
         counties = qry.read()
+
+
+@pytest.mark.skip
+def test_good_create(temp_county):
+    assert qry.is_valid_id(temp_county) # checking if the id is valid
+    assert temp_county in qry.county_cache # verify the county was created
+
+
+def test_create_bad_population():
+    old_count = qry.num_counties() #current count of counties
+    with pytest.raises(Exception):
+        qry.create({'name': 'Test County', 'population': 'not a number', 'state': 'California', 'area': '100 sq mi', 'founded': '1900', 'county_seat': 'Test City'})
+    assert qry.num_counties() == old_count #ensuring no invalid county was created
