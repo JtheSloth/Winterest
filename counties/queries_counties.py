@@ -22,6 +22,7 @@ county_cache = {
     1: SAMPLE_COUNTY,
 }
 
+
 def is_valid_id(_id: str):
     if not isinstance(_id, str):
         return False
@@ -29,8 +30,10 @@ def is_valid_id(_id: str):
         return False
     return True
 
+
 def num_counties():
     return len(county_cache)
+
 
 def is_valid_population(_population):
     if not isinstance(_population, int):
@@ -38,6 +41,7 @@ def is_valid_population(_population):
     if _population < 0:
         return False
     return True
+
 
 def create(fields: dict):
 
