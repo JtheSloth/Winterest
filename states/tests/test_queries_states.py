@@ -15,13 +15,19 @@ def create_temp_state():
 
 @pytest.fixture(scope='function')
 def temp_state():
-    temp_rec = create_temp_state()
-    new_rec_id = qry.create(create_temp_state())
-    yield new_rec_id
+    temp_state = create_temp_state()
+    new_state_id = qry.create(create_temp_state())
+    yield new_state_id
     try:
-        qry.delete(temp_rec[qry.NAME], temp_rec[qry.STATE_CODE])
+        qry.delete(temp_state[qry.NAME], temp_state[qry.STATE_CODE])
     except ValueError:
         print('The record was already deleted.')
+        
+@pytest.fixture(scope='function')
+def temp_state_no_del():
+    temp_state = create_temp_state()
+    qry.create(create_temp_state())
+    return temp_state
         
 
 @pytest.fixture(scope='function')
