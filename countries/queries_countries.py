@@ -11,12 +11,13 @@ AREA = 'area'
 FOUNDED = 'founded'
 PRESIDENT = 'president'
 
+
 SAMPLE_COUNTRY = {
     NAME: 'United States of America',
     POPULATION: 340000000,
     CONTENTIENT: 'North America',
-    CAPITAL: 'Washington DC'
-    GDP = '29.18 trillion USD'.
+    CAPITAL: 'Washington DC',
+    GDP: '29.18 trillion USD',
     AREA: '3,810,000 sq mi',
     FOUNDED: '1776',
     PRESIDENT: 'Donald Trump'
@@ -34,6 +35,7 @@ def is_valid_id(_id: str):
     if len(_id) < MIN_ID_LEN:
         return False
     return True
+
 
 def is_valid_population(_population):
     if not isinstance(_population, int):
@@ -54,7 +56,8 @@ def create(fields: dict):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
     if (not fields.get(POPULATION) or not isinstance(fields[POPULATION], int)):
         raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
-    if (not fields.get(CONTENTIENT) or not isinstance(fields[CONTENTIENT], str)):
+    if (not fields.get(CONTENTIENT) or not isinstance(fields[CONTENTIENT],
+                                                      str)):
         raise ValueError(f'Bad value for {fields.get(CONTENTIENT)=}')
     if (not fields.get(CAPITAL) or not isinstance(fields[CAPITAL], str)):
         raise ValueError(f'Bad value for {fields.get(CAPITAL)=}')
@@ -66,8 +69,8 @@ def create(fields: dict):
         raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
     if (not fields.get(PRESIDENT) or not isinstance(fields[PRESIDENT], str)):
         raise ValueError(f'Bad value for {fields.get(PRESIDENT)=}')
-    new_id = str(len(state_cache) + 1)
-    state_cache[new_id] = fields
+    new_id = str(len(country_cache) + 1)
+    country_cache[new_id] = fields
     return new_id
 
 
@@ -103,5 +106,5 @@ def read(country_id=None):
 def delete(country_id: str):
     if country_id not in country_cache:
         raise ValueError(f'No such country: {country_id}')
-    del state_cache[country_id]
+    del country_cache[country_id]
     return True

@@ -47,3 +47,11 @@ def test_create_bad_population():
         })
     # ensuring no invalid country was created
     assert qry.num_countries() == old_count
+
+
+def test_create_bad_capital():
+    old_count = qry.num_countries()  # current count of countries
+    with pytest.raises(Exception):
+        # try creating a country with an int as the value for capital
+        qry.create({'name': 'United States of America', 'population': 100 , 'continent': 'North America', 'capital': 45, 'gdp': '1.2 T', 'area': '1000 sq mi', 'founded': '1900', 'president': 'Test Person'})
+    assert qry.num_countries() == old_count 
