@@ -24,9 +24,15 @@ SAMPLE_COUNTRY = {
 }
 
 
-country_cache = {
-    1: SAMPLE_COUNTRY
-}
+country_cache = None
+
+def needs_cache(fn, *args, **kwargs):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not country_cache:
+            load_cache()
+        return fn(*args, **kwargs)
+    return wrapper
 
 
 def is_valid_id(_id: str):
@@ -44,11 +50,12 @@ def is_valid_population(_population):
         return False
     return True
 
-
+@needs_cache
 def num_countries():
     return len(country_cache)
 
 
+@needs_cache
 def create(fields: dict):
     if (not isinstance(fields, dict)):
         raise ValueError(f'Bad type for {type(fields)=}')
@@ -102,7 +109,7 @@ def read(country_id=None):
         result = collection.find_one({"id": country_id}, {"_id": 0})
         return result
 
-
+@needs_cache
 def delete(country_id: str):
     if country_id not in country_cache:
         raise ValueError(f'No such country: {country_id}')
