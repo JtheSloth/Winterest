@@ -1,4 +1,10 @@
+import data.db_connect as dbc
+
 from pymongo import MongoClient
+
+from functools import wraps
+
+COUNTRIES_COLLECTION = "countries"
 
 MIN_ID_LEN = 1
 ID = 'id'
@@ -26,7 +32,7 @@ SAMPLE_COUNTRY = {
 
 country_cache = None
 
-def needs_cache(fn, *args, **kwargs):
+def needs_cache(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if not country_cache:
@@ -76,18 +82,20 @@ def create(fields: dict):
         raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
     if (not fields.get(PRESIDENT) or not isinstance(fields[PRESIDENT], str)):
         raise ValueError(f'Bad value for {fields.get(PRESIDENT)=}')
-    new_id = str(len(country_cache) + 1)
-    country_cache[new_id] = fields
+    #new_id = str(len(country_cache) + 1)
+    new_id = dbc.create(COUNTRIES_COLLECTION, fields)
+    #country_cache[new_id] = fields
+    load_cache
     return new_id
 
 
 '''Connects to MongoDB database'''
 
-
+'''
 def db_connect():
     client = MongoClient("mongodb://localhost:27017/")
     db = client["countriesdb"]
-    return db
+    return db'''
 
 
 """
@@ -96,10 +104,9 @@ Reads documents from the MongoDB
 
 
 def read(country_id=None):
-    db = db_connect()
-    if not db:
+    if not dbc:
         raise ConnectionError("Failed to connect to database")
-    collection = db["countriesbd"]
+    collection = dbc["countriesbd"]
 
     if country_id is None:
         # return all countries as a list
@@ -111,7 +118,17 @@ def read(country_id=None):
 
 @needs_cache
 def delete(country_id: str):
+    '''
     if country_id not in country_cache:
         raise ValueError(f'No such country: {country_id}')
-    del country_cache[country_id]
+    del country_cache[country_id]'''
+
+    ret = dbc.delete(COUNTRIES_COLLECTION, {country_id: str})
+    if ret < 1: 
+        raise ValueError(f'Country not found')
+    load_cache()
     return True
+
+def load_cache():
+    global country_cache
+    country_cache = dbc.read(COUNTRIES_COLLECTION)
