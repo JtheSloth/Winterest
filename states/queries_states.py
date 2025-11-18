@@ -15,7 +15,7 @@ SAMPLE_STATE = {
 }
 
 state_cache = {
-    1: SAMPLE_STATE,
+    "1": SAMPLE_STATE,
 }
 
 
@@ -76,18 +76,33 @@ Reads documents from the MongoDB
 
 
 def read(state_id=None):
+    if state_id is not None:
+        state_id = str(state_id)
+
+        if state_id in state_cache:
+            return state_cache[state_id]
+        
+        db = db_connect
+        if not db:
+            raise ConnectionError("Failed to connect to database")
+        collection = db["states"]
+
+        doc = collection.find_one({"id": state_id}, {"_id": 0})
+
+        if doc is not None:
+            cached_doc = {
+                k: v for k, v in doc.items() if k != ID
+            }
+            state_cache[state_id] = cached_doc
+            return cached_doc
+        
+        return None
+
     db = db_connect()
     if not db:
         raise ConnectionError("Failed to connect to database")
     collection = db["states"]
-
-    if state_id is None:
-        # return all states as a list
-        return list(collection.find({}, {"_id": 0}))
-    else:
-        # find one state by its 'id'
-        result = collection.find_one({"id": state_id}, {"_id": 0})
-        return result
+    return list(collection.find({}, {"_id": 0}))
 
 
 def delete(state_id: str):
