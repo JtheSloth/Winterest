@@ -15,8 +15,10 @@ SAMPLE_STATE = {
 }
 
 state_cache = {
-    1: SAMPLE_STATE,
+    "1": SAMPLE_STATE,
 }
+
+read_cache = {}
 
 
 def is_valid_id(_id: str):
@@ -76,18 +78,26 @@ Reads documents from the MongoDB
 
 
 def read(state_id=None):
+    if state_id is not None:
+        state_id = str(state_id)
+
+        if state_id in read_cache:
+            return read_cache[state_id]
+
+        db = db_connect()
+        if not db:
+            raise ConnectionError("Failed to connect to database")
+        collection = db["states"]
+
+        doc = collection.find_one({ID: state_id}, {"_id": 0})
+        read_cache[state_id] = doc
+        return doc
+
     db = db_connect()
     if not db:
         raise ConnectionError("Failed to connect to database")
     collection = db["states"]
-
-    if state_id is None:
-        # return all states as a list
-        return list(collection.find({}, {"_id": 0}))
-    else:
-        # find one state by its 'id'
-        result = collection.find_one({"id": state_id}, {"_id": 0})
-        return result
+    return list(collection.find({}, {"_id": 0}))
 
 
 def delete(state_id: str):
