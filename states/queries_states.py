@@ -83,7 +83,6 @@ def read(state_id=None):
 
         if state_id in read_cache:
             return read_cache[state_id]
-        
         db = db_connect()
         if not db:
             raise ConnectionError("Failed to connect to database")
@@ -93,7 +92,7 @@ def read(state_id=None):
         read_cache[state_id] = doc
         return doc
 
-    db = db_connect() 
+    db = db_connect()
     if not db:
         raise ConnectionError("Failed to connect to database")
     collection = db["states"]
