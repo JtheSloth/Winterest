@@ -21,8 +21,6 @@ state_cache = {
 read_cache = {}
 
 
-
-
 def is_valid_id(_id: str):
     if not isinstance(_id, str):
         return False
