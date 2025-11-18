@@ -21,6 +21,8 @@ state_cache = {
 read_cache = {}
 
 
+
+
 def is_valid_id(_id: str):
     if not isinstance(_id, str):
         return False
@@ -83,6 +85,7 @@ def read(state_id=None):
 
         if state_id in read_cache:
             return read_cache[state_id]
+
         db = db_connect()
         if not db:
             raise ConnectionError("Failed to connect to database")
