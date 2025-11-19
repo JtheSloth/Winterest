@@ -9,13 +9,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import queries_countries as qry
 
-
 def create_temp_country():
     return deepcopy(qry.SAMPLE_COUNTRY)
 
 
 @pytest.fixture(scope='function')
 def temp_country():
+    temp_county = create_temp_country()
     new_id = qry.create(create_temp_country())
     yield new_id
     try:
