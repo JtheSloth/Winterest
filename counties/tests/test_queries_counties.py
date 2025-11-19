@@ -1,6 +1,7 @@
 from copy import deepcopy
 from unittest.mock import patch
 import pytest
+from contextlib import contextmanager
 
 import sys
 from pathlib import Path
@@ -21,6 +22,16 @@ def temp_county():
         qry.delete(new_id)
     except ValueError:
         print('The record has already been deleted.')
+        
+@pytest.fixture
+def county_delta():
+    @contextmanager
+    def _county_delta(delta=0):
+        old_count = qry.num_counties()
+        yield
+        new_count = qry.num_counties()
+        assert new_count - old_count == delta
+    return _county_delta
 
 
 def test_create_bad_name():
@@ -35,7 +46,7 @@ def test_create_bad_param_type():
         qry.create([1, 2, 3])
     assert qry.num_counties() == old_count #make sure number of counties did not change
     
-def test_create_bad_state(county_delta):
+def test_create_bad_state(county):
     with county_delta():
         with pytest.raises(Exception):
             qry.create({'id': '1', 'name': 'Bronx', 'population': 1472654, 'state': 2305354, 'area': '42.2 sq miles', 'founded': '1914','county_seat': 'Bronx Borough Hall'})
