@@ -1,7 +1,5 @@
 import data.db_connect as dbc
 
-from pymongo import MongoClient
-
 from functools import wraps
 
 COUNTRIES_COLLECTION = "countries"
@@ -32,6 +30,7 @@ SAMPLE_COUNTRY = {
 
 country_cache = None
 
+
 def needs_cache(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
@@ -55,6 +54,7 @@ def is_valid_population(_population):
     if _population < 0:
         return False
     return True
+
 
 @needs_cache
 def num_countries():
@@ -82,10 +82,10 @@ def create(fields: dict):
         raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
     if (not fields.get(PRESIDENT) or not isinstance(fields[PRESIDENT], str)):
         raise ValueError(f'Bad value for {fields.get(PRESIDENT)=}')
-    #new_id = str(len(country_cache) + 1)
+    # new_id = str(len(country_cache) + 1)
     new_id = dbc.create(COUNTRIES_COLLECTION, fields)
-    #country_cache[new_id] = fields
-    load_cache
+    # country_cache[new_id] = fields
+    load_cache()
     return new_id
 
 
@@ -116,6 +116,7 @@ def read(country_id=None):
         result = collection.find_one({"id": country_id}, {"_id": 0})
         return result
 
+
 @needs_cache
 def delete(country_id: str):
     '''
@@ -124,10 +125,11 @@ def delete(country_id: str):
     del country_cache[country_id]'''
 
     ret = dbc.delete(COUNTRIES_COLLECTION, {country_id: str})
-    if ret < 1: 
-        raise ValueError(f'Country not found')
+    if ret < 1:
+        raise ValueError('Country not found')
     load_cache()
     return True
+
 
 def load_cache():
     global country_cache

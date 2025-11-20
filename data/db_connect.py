@@ -82,7 +82,7 @@ def convert_mongo_id(doc: dict | None):
         doc[MONGO_ID] = str(doc[MONGO_ID])
 
 @handle_errors
-@retry_mongo
+@retry_mongo()
 @needs_db
 def create(collection, doc, db=SE_DB):
     """
@@ -93,7 +93,7 @@ def create(collection, doc, db=SE_DB):
     return str(ret.inserted_id)
 
 @handle_errors
-@retry_mongo
+@retry_mongo()
 @needs_db
 def read_one(collection, filt, db=SE_DB):
     """
@@ -106,7 +106,7 @@ def read_one(collection, filt, db=SE_DB):
     return doc   
 
 @handle_errors
-@retry_mongo
+@retry_mongo()
 @needs_db
 def delete(collection: str, filt: dict, db=SE_DB):
     """
@@ -117,14 +117,14 @@ def delete(collection: str, filt: dict, db=SE_DB):
     return del_result.deleted_count
 
 @handle_errors
-@retry_mongo
+@retry_mongo()
 @needs_db
 def update(collection, filters, update_dict, db=SE_DB):
     res = client[db][collection].update_one(filters, {'$set': update_dict})
     return res.modified_count
 
 @handle_errors
-@retry_mongo
+@retry_mongo()
 @needs_db
 def read(collection, db=SE_DB, no_id=True) -> list:
     """
