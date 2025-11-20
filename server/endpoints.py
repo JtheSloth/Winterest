@@ -112,7 +112,8 @@ class Countries(Resource):
         try:
             data = request.get_json(force=True)
             new_id = countries.create(data)
-            return {'id': new_id, 'message': 'Country created successfully'}, 201
+            return {'id': new_id,
+                    'message': 'Country created successfully'}, 201
         except ValueError as e:
             return {'error': str(e)}, 400
         except Exception as e:
@@ -304,7 +305,8 @@ class Counties(Resource):
         try:
             data = request.get_json(force=True)
             new_id = counties.create(data)
-            return {'id': new_id, 'message': 'County created successfully'}, 201
+            return {'id': new_id,
+                    'message': 'County created successfully'}, 201
         except ValueError as e:
             return {'error': str(e)}, 400
         except Exception as e:
