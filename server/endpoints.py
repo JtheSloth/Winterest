@@ -9,6 +9,11 @@ from flask_restx import Resource, Api  # , fields  # Namespace
 from flask import request
 from flask_cors import CORS
 
+import countries.queries_countries as countries
+import states.queries_states as states
+import cities.queries_cities as cities
+import counties.queries_counties as counties
+
 # import werkzeug.exceptions as wz
 
 app = Flask(__name__)
@@ -81,3 +86,259 @@ class Echo(Resource):
         """
         data = request.get_json(force=True)
         return {'echo': data}
+
+
+@api.route('/countries')
+class Countries(Resource):
+    """
+    Endpoints for managing countries
+    """
+    @api.doc('get_countries')
+    def get(self):
+        """
+        Get all countries
+        """
+        try:
+            all_countries = countries.read()
+            return {'countries': all_countries}, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('create_country')
+    def post(self):
+        """
+        Create a new country
+        """
+        try:
+            data = request.get_json(force=True)
+            new_id = countries.create(data)
+            return {'id': new_id, 'message': 'Country created successfully'}, 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/countries/<string:country_id>')
+class Country(Resource):
+    """
+    Endpoints for managing a specific country
+    """
+    @api.doc('get_country')
+    def get(self, country_id):
+        """
+        Get a specific country by ID
+        """
+        try:
+            country = countries.read(country_id)
+            if country:
+                return country, 200
+            else:
+                return {'error': 'Country not found'}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('delete_country')
+    def delete(self, country_id):
+        """
+        Delete a specific country by ID
+        """
+        try:
+            countries.delete(country_id)
+            return {'message': 'Country deleted successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/states')
+class States(Resource):
+    """
+    Endpoints for managing states
+    """
+    @api.doc('get_states')
+    def get(self):
+        """
+        Get all states
+        """
+        try:
+            all_states = states.read()
+            return {'states': all_states}, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('create_state')
+    def post(self):
+        """
+        Create a new state
+        """
+        try:
+            data = request.get_json(force=True)
+            new_id = states.create(data)
+            return {'id': new_id, 'message': 'State created successfully'}, 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/states/<string:state_id>')
+class State(Resource):
+    """
+    Endpoints for managing a specific state
+    """
+    @api.doc('get_state')
+    def get(self, state_id):
+        """
+        Get a specific state by ID
+        """
+        try:
+            state = states.read(state_id)
+            if state:
+                return state, 200
+            else:
+                return {'error': 'State not found'}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('delete_state')
+    def delete(self, state_id):
+        """
+        Delete a specific state by ID
+        """
+        try:
+            states.delete(state_id)
+            return {'message': 'State deleted successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/cities')
+class Cities(Resource):
+    """
+    Endpoints for managing cities
+    """
+    @api.doc('get_cities')
+    def get(self):
+        """
+        Get all cities
+        """
+        try:
+            all_cities = cities.read()
+            return {'cities': all_cities}, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('create_city')
+    def post(self):
+        """
+        Create a new city
+        """
+        try:
+            data = request.get_json(force=True)
+            new_id = cities.create(data)
+            return {'id': new_id, 'message': 'City created successfully'}, 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/cities/<string:city_id>')
+class City(Resource):
+    """
+    Endpoints for managing a specific city
+    """
+    @api.doc('get_city')
+    def get(self, city_id):
+        """
+        Get a specific city by ID
+        """
+        try:
+            city = cities.read(city_id)
+            if city:
+                return city, 200
+            else:
+                return {'error': 'City not found'}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('delete_city')
+    def delete(self, city_id):
+        """
+        Delete a specific city by ID
+        """
+        try:
+            cities.delete(city_id)
+            return {'message': 'City deleted successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/counties')
+class Counties(Resource):
+    """
+    Endpoints for managing counties
+    """
+    @api.doc('get_counties')
+    def get(self):
+        """
+        Get all counties
+        """
+        try:
+            all_counties = counties.read()
+            return {'counties': all_counties}, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('create_county')
+    def post(self):
+        """
+        Create a new county
+        """
+        try:
+            data = request.get_json(force=True)
+            new_id = counties.create(data)
+            return {'id': new_id, 'message': 'County created successfully'}, 201
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+
+@api.route('/counties/<string:county_id>')
+class County(Resource):
+    """
+    Endpoints for managing a specific county
+    """
+    @api.doc('get_county')
+    def get(self, county_id):
+        """
+        Get a specific county by ID
+        """
+        try:
+            county = counties.read(county_id)
+            if county:
+                return county, 200
+            else:
+                return {'error': 'County not found'}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('delete_county')
+    def delete(self, county_id):
+        """
+        Delete a specific county by ID
+        """
+        try:
+            counties.delete(county_id)
+            return {'message': 'County deleted successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
