@@ -60,7 +60,8 @@ def create(fields: dict):
         raise ValueError(f'Bad value for {fields.get(CAPITAL)=}')
     if (not fields.get(POPULATION) or not isinstance(fields[POPULATION], int)):
         raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
-    if (not fields.get(COUNTRY_CODE) or not isinstance(fields[COUNTRY_CODE], str)):
+    if (not fields.get(COUNTRY_CODE) or
+            not isinstance(fields[COUNTRY_CODE], str)):
         raise ValueError(f'Bad value for {fields.get(COUNTRY_CODE)=}')
     new_id = str(len(state_cache) + 1)
     state_cache[new_id] = fields
