@@ -1,5 +1,6 @@
-from pymongo import MongoClient
-from functools import wraps
+import data.db_connect as dbc
+
+COLLECTION = 'counties'
 
 MIN_ID_LEN = 1
 ID = 'id'
@@ -67,54 +68,17 @@ def create(fields: dict):
     if not fields.get(COUNTY_SEAT) or not isinstance(fields[COUNTY_SEAT], str):
         raise ValueError(f'Bad value for {fields.get(COUNTY_SEAT)=}')
 
-    new_id = str(len(county_cache) + 1)
+    new_id = dbc.create(COLLECTION, fields)
     county_cache[new_id] = fields
     return new_id
 
 
-'''Connects to MongoDB database'''
-
-
-def db_connect():
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client["countydb"]
-    return db
-
-
-'''Decorator to ensure database connection'''
-
-
-def ensure_db_connection(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        db = db_connect()
-        if not db:
-            raise ConnectionError("Failed to connect to database")
-        return func(*args, **kwargs)
-    return wrapper
-
-
-"""
-Reads documents from the MongoDB
-"""
-
-
-@ensure_db_connection
 def read(county_id=None):
-    db = db_connect()
-    collection = db["counties"]
-
-    if county_id is None:
-        # return all counties as a list
-        return list(collection.find({}, {"_id": 0}))
-    else:
-        # find one county by its 'id'
-        result = collection.find_one({"id": county_id}, {"_id": 0})
-        return result
+    return dbc.read(COLLECTION)
 
 
 def delete(county_id: str):
-    if county_id not in county_cache:
-        raise ValueError(f'No such county: {county_id}')
-    del county_cache[county_id]
-    return True
+    result = dbc.delete(COLLECTION, {ID: county_id})
+    if result < 1:
+        raise ValueError(f'County not found: {county_id}')
+    return result
