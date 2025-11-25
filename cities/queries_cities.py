@@ -9,12 +9,13 @@ STATE = 'state'
 AREA = 'area'
 FOUNDED = 'founded'
 MAYOR = 'mayor'
-
+STATE_CODE = 'state_code'
 
 SAMPLE_CITY = {
     NAME: 'New York City',
     POPULATION: '8,478,000',
     STATE: 'New York',
+    STATE_CODE: 'NY',
     AREA: '469 sq mi',
     FOUNDED: '1624',
     MAYOR: 'Eric Adams'
@@ -43,6 +44,12 @@ def create(fields: dict):
         raise ValueError(f'Bad type for {type(fields)=}')
     if (not fields.get(NAME)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
+    if (not fields.get(STATE_CODE)
+            or not isinstance(fields[STATE_CODE], str)
+            or len(fields[STATE_CODE]) < MIN_ID_LEN):
+        raise ValueError(
+            f'Bad value for {fields.get(STATE_CODE)=}'
+        )
     new_id = dbc.create(COLLECTION, fields)
     city_cache[new_id] = fields
     return new_id
