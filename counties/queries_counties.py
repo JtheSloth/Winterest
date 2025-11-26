@@ -31,7 +31,7 @@ def needs_cache(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if not county_cache:
-            docs = dbc.read(COLLECTION)  # assume this returns an iterable of dicts
+            docs = dbc.read(COLLECTION) 
             for doc in docs:
                 county_id = doc.get(ID)
                 if county_id is not None:

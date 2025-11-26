@@ -1,3 +1,4 @@
+from functools import wraps
 import data.db_connect as dbc
 COLLECTION = 'cities'
 
@@ -27,6 +28,19 @@ city_cache = {
 }
 
 
+def needs_cache(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not city_cache:
+            docs = dbc.read(COLLECTION) 
+            for doc in docs:
+                county_id = doc.get(ID)
+                if county_id is not None:
+                    city_cache[county_id] = doc
+        return fn(*args, **kwargs)
+    return wrapper
+
+
 def is_valid_id(_id: str):
     if not isinstance(_id, str):
         return False
@@ -34,7 +48,7 @@ def is_valid_id(_id: str):
         return False
     return True
 
-
+@needs_cache
 def num_cities():
     return len(city_cache)
 
@@ -54,7 +68,7 @@ def create(fields: dict):
     city_cache[new_id] = fields
     return new_id
 
-
+@needs_cache
 def read(city_id=None):
     return dbc.read(COLLECTION)
 

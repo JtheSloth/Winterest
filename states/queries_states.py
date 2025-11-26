@@ -1,4 +1,8 @@
+from functools import wraps
 from pymongo import MongoClient
+import data.db_connect as dbc
+
+COLLECTION = 'states'
 
 MIN_ID_LEN = 1
 ID = 'id'
@@ -21,6 +25,20 @@ SAMPLE_STATE = {
 state_cache = {
     "1": SAMPLE_STATE,
 }
+
+
+def needs_cache(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not state_cache:
+            docs = dbc.read(COLLECTION)
+            for doc in docs:
+                county_id = doc.get(ID)
+                if county_id is not None:
+                    state_cache[county_id] = doc
+        return fn(*args, **kwargs)
+    return wrapper
+
 
 read_cache = {}
 
@@ -49,6 +67,7 @@ def is_valid_governor(_governor: str):
     return True
 
 
+@needs_cache
 def num_states():
     return len(state_cache)
 
@@ -84,6 +103,7 @@ Reads documents from the MongoDB
 """
 
 
+@needs_cache
 def read(state_id=None):
     if state_id is not None:
         state_id = str(state_id)
