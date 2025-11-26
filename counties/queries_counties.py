@@ -10,6 +10,7 @@ STATE = 'state'
 AREA = 'area'
 FOUNDED = 'founded'
 COUNTY_SEAT = 'county_seat'
+STATE_CODE = 'STATE_CODE'
 
 SAMPLE_COUNTY = {
     NAME: 'Los Angeles County',
@@ -17,7 +18,8 @@ SAMPLE_COUNTY = {
     STATE: 'California',
     AREA: '4,751 sq mi',
     FOUNDED: '1850',
-    COUNTY_SEAT: 'Los Angeles'
+    COUNTY_SEAT: 'Los Angeles',
+    STATE_CODE: 'CA'
 }
 
 county_cache = {

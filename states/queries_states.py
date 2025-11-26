@@ -7,6 +7,7 @@ POPULATION = 'population'
 CAPITAL = 'capital'
 GOVERNOR = 'governor'
 COUNTRY_CODE = 'country_code'
+CODE = 'code'
 
 SAMPLE_STATE = {
     NAME: 'New York',
@@ -14,6 +15,7 @@ SAMPLE_STATE = {
     CAPITAL: 'Albany',
     GOVERNOR: 'Kathy Hochul',
     COUNTRY_CODE: 'US',
+    CODE: 'NY'
 }
 
 state_cache = {
