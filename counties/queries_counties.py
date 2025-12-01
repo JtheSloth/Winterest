@@ -27,11 +27,12 @@ county_cache = {
     1: SAMPLE_COUNTY,
 }
 
+
 def needs_cache(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if not county_cache:
-            docs = dbc.read(COLLECTION) 
+            docs = dbc.read(COLLECTION)
             for doc in docs:
                 county_id = doc.get(ID)
                 if county_id is not None:
@@ -87,6 +88,7 @@ def create(fields: dict):
     new_id = dbc.create(COLLECTION, fields)
     county_cache[new_id] = fields
     return new_id
+
 
 @needs_cache
 def read(county_id=None):
