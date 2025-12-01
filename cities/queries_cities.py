@@ -75,8 +75,8 @@ def read(city_id=None):
     return dbc.read(COLLECTION)
 
 
-def delete(city_id: str):
-    result = dbc.delete(COLLECTION, {ID: city_id})
+def delete(name: str):
+    result = dbc.delete(COLLECTION, {NAME: name})
     if result < 1:
-        raise ValueError(f'City not found: {city_id}')
+        raise ValueError(f'City not found: {name}')
     return result
