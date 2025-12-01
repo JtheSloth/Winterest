@@ -1,5 +1,4 @@
 from functools import wraps
-from pymongo import MongoClient
 import data.db_connect as dbc
 
 COLLECTION = 'states'
@@ -33,14 +32,11 @@ def needs_cache(fn):
         if not state_cache:
             docs = dbc.read(COLLECTION)
             for doc in docs:
-                county_id = doc.get(ID)
-                if county_id is not None:
-                    state_cache[county_id] = doc
+                state_id = doc.get(ID)
+                if state_id is not None:
+                    state_cache[state_id] = doc
         return fn(*args, **kwargs)
     return wrapper
-
-
-read_cache = {}
 
 
 def is_valid_id(_id: str):
@@ -84,47 +80,14 @@ def create(fields: dict):
     if (not fields.get(COUNTRY_CODE) or
             not isinstance(fields[COUNTRY_CODE], str)):
         raise ValueError(f'Bad value for {fields.get(COUNTRY_CODE)=}')
-    new_id = str(len(state_cache) + 1)
+    new_id = dbc.create(COLLECTION, fields)
     state_cache[new_id] = fields
     return new_id
 
 
-'''Connects to MongoDB database'''
-
-
-def db_connect():
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client["statesdb"]
-    return db
-
-
-"""
-Reads documents from the MongoDB
-"""
-
-
 @needs_cache
 def read(state_id=None):
-    if state_id is not None:
-        state_id = str(state_id)
-
-        if state_id in read_cache:
-            return read_cache[state_id]
-
-        db = db_connect()
-        if not db:
-            raise ConnectionError("Failed to connect to database")
-        collection = db["states"]
-
-        doc = collection.find_one({ID: state_id}, {"_id": 0})
-        read_cache[state_id] = doc
-        return doc
-
-    db = db_connect()
-    if not db:
-        raise ConnectionError("Failed to connect to database")
-    collection = db["states"]
-    return list(collection.find({}, {"_id": 0}))
+    return dbc.read(COLLECTION)
 
 
 def delete(state_id: str):

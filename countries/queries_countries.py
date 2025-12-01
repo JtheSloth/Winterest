@@ -34,8 +34,14 @@ country_cache = None
 def needs_cache(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
+        global country_cache
         if not country_cache:
-            load_cache()
+            country_cache = {}
+            docs = dbc.read(COUNTRIES_COLLECTION)
+            for doc in docs:
+                country_id = doc.get(ID)
+                if country_id is not None:
+                    country_cache[country_id] = doc
         return fn(*args, **kwargs)
     return wrapper
 
@@ -61,7 +67,6 @@ def num_countries():
     return len(country_cache)
 
 
-@needs_cache
 def create(fields: dict):
     if (not isinstance(fields, dict)):
         raise ValueError(f'Bad type for {type(fields)=}')
@@ -82,55 +87,18 @@ def create(fields: dict):
         raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
     if (not fields.get(PRESIDENT) or not isinstance(fields[PRESIDENT], str)):
         raise ValueError(f'Bad value for {fields.get(PRESIDENT)=}')
-    # new_id = str(len(country_cache) + 1)
     new_id = dbc.create(COUNTRIES_COLLECTION, fields)
-    # country_cache[new_id] = fields
-    load_cache()
+    country_cache[new_id] = fields
     return new_id
 
 
-'''Connects to MongoDB database'''
-
-'''
-def db_connect():
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client["countriesdb"]
-    return db'''
-
-
-"""
-Reads documents from the MongoDB
-"""
-
-
-def read(country_id=None):
-    if not dbc:
-        raise ConnectionError("Failed to connect to database")
-    collection = dbc["countriesbd"]
-
-    if country_id is None:
-        # return all countries as a list
-        return list(collection.find({}, {"_id": 0}))
-    else:
-        # find one country by its 'id'
-        result = collection.find_one({"id": country_id}, {"_id": 0})
-        return result
-
-
 @needs_cache
-def delete(country_id: str):
-    '''
-    if country_id not in country_cache:
-        raise ValueError(f'No such country: {country_id}')
-    del country_cache[country_id]'''
-
-    ret = dbc.delete(COUNTRIES_COLLECTION, {country_id: str})
-    if ret < 1:
-        raise ValueError('Country not found')
-    load_cache()
-    return True
+def read(country_id=None):
+    return dbc.read(COUNTRIES_COLLECTION)
 
 
-def load_cache():
-    global country_cache
-    country_cache = dbc.read(COUNTRIES_COLLECTION)
+def delete(name: str):
+    result = dbc.delete(COUNTRIES_COLLECTION, {NAME: name})
+    if result < 1:
+        raise ValueError(f'Country not found: {name}')
+    return result
