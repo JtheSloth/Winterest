@@ -32,7 +32,7 @@ def needs_cache(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         if not city_cache:
-            docs = dbc.read(COLLECTION) 
+            docs = dbc.read(COLLECTION)
             for doc in docs:
                 county_id = doc.get(ID)
                 if county_id is not None:
@@ -47,6 +47,7 @@ def is_valid_id(_id: str):
     if len(_id) < MIN_ID_LEN:
         return False
     return True
+
 
 @needs_cache
 def num_cities():
@@ -67,6 +68,7 @@ def create(fields: dict):
     new_id = dbc.create(COLLECTION, fields)
     city_cache[new_id] = fields
     return new_id
+
 
 @needs_cache
 def read(city_id=None):
