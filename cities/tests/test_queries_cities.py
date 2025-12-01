@@ -60,9 +60,11 @@ def test_read(temp_city):
     assert create_temp_city() in all_cities
 
 @pytest.mark.skip
-@patch('queries_cities.db_connect', return_value=False, autospec=True)
-def test_read_cant_connect(mock_db_connect):
-    with pytest.raises(ConnectionError):
+@patch('data.db_connect.read')
+def test_read_cant_connect(mock_dbc_read):
+    from data.db_connect import DBError
+    mock_dbc_read.side_effect = DBError("Connection failed")
+    with pytest.raises(DBError):
         cities = qry.read()
 
 
@@ -107,10 +109,9 @@ def test_city_has_valid_state():
 
 @pytest.fixture
 def db_failure():
-    with patch('queries_cities.db_connect') as mock_db_connect:
-        mock_db = mock_db_connect.return_value
-        mock_db.__getitem__.side_effect = Exception("Database failure")
-        yield mock_db_connect
+    with patch('data.db_connect.read') as mock_dbc_read:
+        mock_dbc_read.side_effect = Exception("Database failure")
+        yield mock_dbc_read
 
 @pytest.mark.skip
 def test_read_handles_db_failure(db_failure):

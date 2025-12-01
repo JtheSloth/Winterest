@@ -118,29 +118,23 @@ def test_create_bad_param_type(state_delta):
     assert qry.num_states() == old_count #make sure number of states did not change'''
 
 
-@patch('queries_states.db_connect')
-def test_read(mock_db_connect, temp_state):
-    # create a test state
-    # new_rec_id = qry.create(qry.SAMPLE_STATE)
-
-    # mock the MongoDB collection
-    mock_collection = mock_db_connect.return_value.__getitem__.return_value
-    mock_collection.find_one.return_value = {'id': temp_state, 'name': 'New York'}
-    mock_collection.find.return_value = [{'id': '1', 'name': 'New York'}, {'id': '2', 'name': 'California'}]
-
-    # test reading that specific state
-    result = qry.read(temp_state)
-    assert result is not None
-    assert result['id'] == temp_state
+@patch('data.db_connect.read')
+def test_read(mock_dbc_read, temp_state):
+    # mock the dbc.read to return test data
+    mock_dbc_read.return_value = [{'id': '1', 'name': 'New York'}, {'id': '2', 'name': 'California'}]
 
     # test reading all states
     all_states = qry.read()
     assert isinstance(all_states, list)
     assert len(all_states) > 0
-    
-@patch('queries_states.db_connect', return_value=False, autospec=True)
-def test_read_cant_connect(mock_db_connect):
-    with pytest.raises(ConnectionError):
+
+@patch('data.db_connect.read')
+def test_read_cant_connect(mock_dbc_read):
+    # mock dbc.read to raise an error
+    from data.db_connect import DBError
+    mock_dbc_read.side_effect = DBError("Connection failed")
+
+    with pytest.raises(DBError):
         states = qry.read()
                 
         

@@ -57,9 +57,11 @@ def test_read(temp_county):
     assert create_temp_county() in all_counties
 
 @pytest.mark.skip
-@patch('queries_counties.db_connect', return_value=False, autospec=True)
-def test_read_cant_connect(mock_db_connect):
-    with pytest.raises(ConnectionError):
+@patch('data.db_connect.read')
+def test_read_cant_connect(mock_dbc_read):
+    from data.db_connect import DBError
+    mock_dbc_read.side_effect = DBError("Connection failed")
+    with pytest.raises(DBError):
         counties = qry.read()
 
 
