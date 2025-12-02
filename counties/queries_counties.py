@@ -98,5 +98,5 @@ def read(county_id=None):
 def delete(name: str, state_code: str):
     result = dbc.delete(COLLECTION, {NAME: name, STATE_CODE: state_code})
     if result < 1:
-        raise ValueError(f'County not found: {name}')
+        raise ValueError(f'County not found: {name}, {state_code}')
     return result

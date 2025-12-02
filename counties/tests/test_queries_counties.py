@@ -26,8 +26,8 @@ def temp_county():
 @pytest.fixture(scope='function')
 def temp_county_no_delete():
     temp_county = create_temp_county()
-    new_id = qry.create(create_temp_county)
-    return (temp_county, new_id)
+    new_id = qry.create(create_temp_county())
+    return temp_county
         
 @pytest.fixture
 def county_delta():
@@ -62,6 +62,9 @@ def test_read(temp_county):
     assert isinstance(all_counties, list)
     assert create_temp_county() in all_counties
 
+def test_delete(temp_county_no_delete):
+    result = qry.delete(temp_county_no_delete[qry.NAME], temp_county_no_delete[qry.STATE_CODE])
+    assert result == 1
 
 @pytest.mark.skip
 @patch('data.db_connect.read')
