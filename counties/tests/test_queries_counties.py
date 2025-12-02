@@ -19,9 +19,15 @@ def temp_county():
     new_id = qry.create(create_temp_county())
     yield new_id
     try:
-        qry.delete(new_id)
+        qry.delete(temp_county[qry.NAME], temp_county[qry.STATE_CODE])
     except ValueError:
         print('The record has already been deleted.')
+
+@pytest.fixture(scope='function')
+def temp_county_no_delete():
+    temp_county = create_temp_county()
+    new_id = qry.create(create_temp_county)
+    return (temp_county, new_id)
         
 @pytest.fixture
 def county_delta():
@@ -55,6 +61,7 @@ def test_read(temp_county):
     all_counties = qry.read()
     assert isinstance(all_counties, list)
     assert create_temp_county() in all_counties
+
 
 @pytest.mark.skip
 @patch('data.db_connect.read')
