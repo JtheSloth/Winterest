@@ -56,7 +56,13 @@ def test_create_bad_state(county_delta):
     with county_delta():
         with pytest.raises(Exception):
             qry.create({'id': '1', 'name': 'Bronx', 'population': 1472654, 'state': 2305354, 'area': '42.2 sq miles', 'founded': '1914','county_seat': 'Bronx Borough Hall'})
-    
+
+def test_create_bad_population(county_delta):
+    with county_delta():
+        with pytest.raises(Exception):
+            qry.create({'id': '1', 'name': 'Bronx', 'population': 'test', 'state': 'New York', 'area': '42.2 sq miles', 'founded': '1914','county_seat': 'Bronx Borough Hall'})
+
+
 def test_read(temp_county):
     all_counties = qry.read()
     assert isinstance(all_counties, list)
