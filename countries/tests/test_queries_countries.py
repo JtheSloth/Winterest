@@ -65,3 +65,10 @@ def test_create_bad_gdp():
         #try creating a country with an int as the value for gdp
         qry.create({'name': 'United States of America', 'population': 100 , 'contentient': 'North America', 'capital': 'DC', 'gdp': 12000000, 'area': '1000 sq mi', 'founded': '1900', 'president': 'Test Person'})
     assert qry.num_countries() == old_count
+
+def test_create_bad_area():
+    old_count = qry.num_countries()  #current count of countries
+    with pytest.raises(Exception):
+        #try creating a country with an int as the value for area
+        qry.create({'name': 'United States of America', 'population': 100 , 'contentient': 'North America', 'capital': 'DC', 'gdp': '1.2 T', 'area': 3810000, 'founded': '1900', 'president': 'Test Person'})
+    assert qry.num_countries() == old_count
