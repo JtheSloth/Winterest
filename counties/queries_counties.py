@@ -95,6 +95,44 @@ def read(county_id=None):
     return dbc.read(COLLECTION)
 
 
+def update(name: str, state_code: str, fields: dict):
+    if not isinstance(fields, dict):
+        raise ValueError(f'Bad type for {type(fields)=}')
+    if not name or not isinstance(name, str):
+        raise ValueError(f'Bad value for {name=}')
+    if not state_code or not isinstance(state_code, str):
+        raise ValueError(f'Bad value for {state_code=}')
+
+    # Validate fields if provided
+    if NAME in fields and (not fields[NAME] or not isinstance(fields[NAME], str)):
+        raise ValueError(f'Bad value for {fields.get(NAME)=}')
+    if POPULATION in fields and (not isinstance(fields[POPULATION], int) or fields[POPULATION] < 0):
+        raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
+    if STATE in fields and (not fields[STATE] or not isinstance(fields[STATE], str)):
+        raise ValueError(f'Bad value for {fields.get(STATE)=}')
+    if AREA in fields and (not fields[AREA] or not isinstance(fields[AREA], str)):
+        raise ValueError(f'Bad value for {fields.get(AREA)=}')
+    if FOUNDED in fields and (not fields[FOUNDED] or not isinstance(fields[FOUNDED], str)):
+        raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
+    if COUNTY_SEAT in fields and (not fields[COUNTY_SEAT] or not isinstance(fields[COUNTY_SEAT], str)):
+        raise ValueError(f'Bad value for {fields.get(COUNTY_SEAT)=}')
+    if STATE_CODE in fields and (not fields[STATE_CODE] or not isinstance(fields[STATE_CODE], str)):
+        raise ValueError(f'Bad value for {fields.get(STATE_CODE)=}')
+
+    result = dbc.update(COLLECTION, {NAME: name, STATE_CODE: state_code}, fields)
+    if result < 1:
+        raise ValueError(f'County not found: {name}, {state_code}')
+
+    # Update cache
+    if county_cache:
+        for key, county in county_cache.items():
+            if county.get(NAME) == name and county.get(STATE_CODE) == state_code:
+                county_cache[key].update(fields)
+                break
+
+    return result
+
+
 def delete(name: str, state_code: str):
     result = dbc.delete(COLLECTION, {NAME: name, STATE_CODE: state_code})
     if result < 1:
