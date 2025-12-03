@@ -104,21 +104,29 @@ def update(name: str, fields: dict):
         raise ValueError(f'Bad value for {name=}')
 
     # Validate fields if provided
-    if NAME in fields and (not fields[NAME] or not isinstance(fields[NAME], str)):
+    if NAME in fields and (not fields[NAME] or
+                           not isinstance(fields[NAME], str)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
-    if POPULATION in fields and (not isinstance(fields[POPULATION], int) or fields[POPULATION] < 0):
+    if POPULATION in fields and (not isinstance(fields[POPULATION], int) or
+                                 fields[POPULATION] < 0):
         raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
-    if CONTENTIENT in fields and (not fields[CONTENTIENT] or not isinstance(fields[CONTENTIENT], str)):
+    if CONTENTIENT in fields and (not fields[CONTENTIENT] or
+                                  not isinstance(fields[CONTENTIENT], str)):
         raise ValueError(f'Bad value for {fields.get(CONTENTIENT)=}')
-    if CAPITAL in fields and (not fields[CAPITAL] or not isinstance(fields[CAPITAL], str)):
+    if CAPITAL in fields and (not fields[CAPITAL] or
+                              not isinstance(fields[CAPITAL], str)):
         raise ValueError(f'Bad value for {fields.get(CAPITAL)=}')
-    if GDP in fields and (not fields[GDP] or not isinstance(fields[GDP], str)):
+    if GDP in fields and (not fields[GDP] or
+                          not isinstance(fields[GDP], str)):
         raise ValueError(f'Bad value for {fields.get(GDP)=}')
-    if AREA in fields and (not fields[AREA] or not isinstance(fields[AREA], str)):
+    if AREA in fields and (not fields[AREA] or
+                           not isinstance(fields[AREA], str)):
         raise ValueError(f'Bad value for {fields.get(AREA)=}')
-    if FOUNDED in fields and (not fields[FOUNDED] or not isinstance(fields[FOUNDED], str)):
+    if FOUNDED in fields and (not fields[FOUNDED] or
+                              not isinstance(fields[FOUNDED], str)):
         raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
-    if PRESIDENT in fields and (not fields[PRESIDENT] or not isinstance(fields[PRESIDENT], str)):
+    if PRESIDENT in fields and (not fields[PRESIDENT] or
+                                not isinstance(fields[PRESIDENT], str)):
         raise ValueError(f'Bad value for {fields.get(PRESIDENT)=}')
 
     result = dbc.update(COUNTRIES_COLLECTION, {NAME: name}, fields)
@@ -130,6 +138,7 @@ def update(name: str, fields: dict):
         country_cache[name].update(fields)
 
     return result
+
 
 def delete(name: str):
     result = dbc.delete(COUNTRIES_COLLECTION, {NAME: name})

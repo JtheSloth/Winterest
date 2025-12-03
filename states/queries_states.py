@@ -97,17 +97,23 @@ def update(state_id: str, fields: dict):
         raise ValueError(f'Bad value for {state_id=}')
 
     # Validate fields if provided
-    if NAME in fields and (not fields[NAME] or not isinstance(fields[NAME], str)):
+    if NAME in fields and (not fields[NAME] or
+                           not isinstance(fields[NAME], str)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
-    if CAPITAL in fields and (not fields[CAPITAL] or not isinstance(fields[CAPITAL], str)):
+    if CAPITAL in fields and (not fields[CAPITAL] or
+                              not isinstance(fields[CAPITAL], str)):
         raise ValueError(f'Bad value for {fields.get(CAPITAL)=}')
-    if POPULATION in fields and (not isinstance(fields[POPULATION], int) or fields[POPULATION] < 0):
+    if POPULATION in fields and (not isinstance(fields[POPULATION], int) or
+                                 fields[POPULATION] < 0):
         raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
-    if COUNTRY_CODE in fields and (not fields[COUNTRY_CODE] or not isinstance(fields[COUNTRY_CODE], str)):
+    if COUNTRY_CODE in fields and (not fields[COUNTRY_CODE] or
+                                   not isinstance(fields[COUNTRY_CODE], str)):
         raise ValueError(f'Bad value for {fields.get(COUNTRY_CODE)=}')
-    if CODE in fields and (not fields[CODE] or not isinstance(fields[CODE], str)):
+    if CODE in fields and (not fields[CODE] or
+                           not isinstance(fields[CODE], str)):
         raise ValueError(f'Bad value for {fields.get(CODE)=}')
-    if GOVERNOR in fields and (not fields[GOVERNOR] or not isinstance(fields[GOVERNOR], str)):
+    if GOVERNOR in fields and (not fields[GOVERNOR] or
+                               not isinstance(fields[GOVERNOR], str)):
         raise ValueError(f'Bad value for {fields.get(GOVERNOR)=}')
 
     result = dbc.update(COLLECTION, {ID: state_id}, fields)

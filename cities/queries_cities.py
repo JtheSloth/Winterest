@@ -82,19 +82,27 @@ def update(name: str, fields: dict):
         raise ValueError(f'Bad value for {name=}')
 
     # Validate fields if provided
-    if NAME in fields and (not fields[NAME] or not isinstance(fields[NAME], str)):
+    if NAME in fields and (not fields[NAME] or
+                           not isinstance(fields[NAME], str)):
         raise ValueError(f'Bad value for {fields.get(NAME)=}')
-    if STATE in fields and (not fields[STATE] or not isinstance(fields[STATE], str)):
+    if STATE in fields and (not fields[STATE] or
+                            not isinstance(fields[STATE], str)):
         raise ValueError(f'Bad value for {fields.get(STATE)=}')
-    if STATE_CODE in fields and (not fields[STATE_CODE] or not isinstance(fields[STATE_CODE], str) or len(fields[STATE_CODE]) < MIN_ID_LEN):
+    if STATE_CODE in fields and (not fields[STATE_CODE] or
+                                 not isinstance(fields[STATE_CODE], str) or
+                                 len(fields[STATE_CODE]) < MIN_ID_LEN):
         raise ValueError(f'Bad value for {fields.get(STATE_CODE)=}')
-    if POPULATION in fields and (not fields[POPULATION] or not isinstance(fields[POPULATION], str)):
+    if POPULATION in fields and (not fields[POPULATION] or
+                                 not isinstance(fields[POPULATION], str)):
         raise ValueError(f'Bad value for {fields.get(POPULATION)=}')
-    if AREA in fields and (not fields[AREA] or not isinstance(fields[AREA], str)):
+    if AREA in fields and (not fields[AREA] or
+                           not isinstance(fields[AREA], str)):
         raise ValueError(f'Bad value for {fields.get(AREA)=}')
-    if FOUNDED in fields and (not fields[FOUNDED] or not isinstance(fields[FOUNDED], str)):
+    if FOUNDED in fields and (not fields[FOUNDED] or
+                              not isinstance(fields[FOUNDED], str)):
         raise ValueError(f'Bad value for {fields.get(FOUNDED)=}')
-    if MAYOR in fields and (not fields[MAYOR] or not isinstance(fields[MAYOR], str)):
+    if MAYOR in fields and (not fields[MAYOR] or
+                            not isinstance(fields[MAYOR], str)):
         raise ValueError(f'Bad value for {fields.get(MAYOR)=}')
 
     result = dbc.update(COLLECTION, {NAME: name}, fields)
