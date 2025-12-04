@@ -90,23 +90,23 @@ class Echo(Resource):
 
 @api.route('/stats')
 class Stats(Resource):
-      """
-      Statistics endpoint
-      """
-      @api.doc('get_stats')
-      def get(self):
-          """
-          Get count of all geographic entities
-          """
-          try:
-              return {
-                  'countries': len(countries.read()),
-                  'states': len(states.read()),
-                  'cities': len(cities.read()),
-                  'counties': len(counties.read())
-              }, 200
-          except Exception as e:
-              return {'error': str(e)}, 500
+    """
+    Statistics endpoint
+    """
+    @api.doc('get_stats')
+    def get(self):
+        """
+        Get count of all geographic entities
+        """
+        try:
+            return {
+                'countries': len(countries.read()),
+                'states': len(states.read()),
+                'cities': len(cities.read()),
+                'counties': len(counties.read())
+            }, 200
+        except Exception as e:
+            return {'error': str(e)}, 500
 
 
 @api.route('/countries')
