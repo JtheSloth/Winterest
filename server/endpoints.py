@@ -121,7 +121,9 @@ class Countries(Resource):
         """
         try:
             all_countries = countries.read()
-            return {'countries': all_countries}, 200
+            sorted_countries = sorted(all_countries,
+                                      key=lambda x: x.get('name', ''))
+            return {'countries': sorted_countries}, 200
         except Exception as e:
             return {'error': str(e)}, 500
 
@@ -186,7 +188,9 @@ class States(Resource):
         """
         try:
             all_states = states.read()
-            return {'states': all_states}, 200
+            sorted_states = sorted(all_states,
+                                   key=lambda x: x.get('name', ''))
+            return {'states': sorted_states}, 200
         except Exception as e:
             return {'error': str(e)}, 500
 
@@ -250,7 +254,9 @@ class Cities(Resource):
         """
         try:
             all_cities = cities.read()
-            return {'cities': all_cities}, 200
+            sorted_cities = sorted(all_cities,
+                                   key=lambda x: x.get('name', ''))
+            return {'cities': sorted_cities}, 200
         except Exception as e:
             return {'error': str(e)}, 500
 
@@ -314,7 +320,9 @@ class Counties(Resource):
         """
         try:
             all_counties = counties.read()
-            return {'counties': all_counties}, 200
+            sorted_counties = sorted(all_counties,
+                                     key=lambda x: x.get('name', ''))
+            return {'counties': sorted_counties}, 200
         except Exception as e:
             return {'error': str(e)}, 500
 
