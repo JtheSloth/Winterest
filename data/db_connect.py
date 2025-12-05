@@ -24,6 +24,22 @@ passwd = os.environ.get("MONGO_PASSWD", '')
 cloud_mdb = "mongodb+srv"
 db_params = "retryWrites=false&w=majority"
 
+# parameter names of mongo client settings
+SERVER_API_PARAM = 'server_api'
+CONN_TIMEOUT = 'connectTimeoutMS'
+SOCK_TIMEOUT = 'socketTimeoutMS'
+CONNECT = 'connect'
+MAX_POOL_SIZE = 'maxPoolSize'
+
+# Recommended Python Anywhere settings.
+PA_MONGO = os.getenv('PA_MONGO', True)
+PA_SETTINGS = {
+    CONN_TIMEOUT: os.getenv('MONGO_CONN_TIMEOUT', 30000),
+    SOCK_TIMEOUT: os.getenv('MONGO_SOCK_TIMEOUT', None),
+    CONNECT: os.getenv('MONGO_CONNECT', False),
+    MAX_POOL_SIZE: os.getenv('MONGO_MAX_POOL_SIZE', 1),
+}
+
 def needs_db(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
