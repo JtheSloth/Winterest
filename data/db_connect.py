@@ -18,6 +18,12 @@ client = None
 
 MONGO_ID = '_id'
 
+user_nm = os.getenv('MONGO_USER_NM', 'datamixmaster')
+cloud_svc = os.getenv('MONGO_HOST', 'datamixmaster.26rvk.mongodb.net')
+passwd = os.environ.get("MONGO_PASSWD", '')
+cloud_mdb = "mongodb+srv"
+db_params = "retryWrites=false&w=majority"
+
 def needs_db(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):

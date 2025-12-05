@@ -24,7 +24,7 @@ api = Api(
     title='Geographic Database API',
     description='A REST API for managing geographic data including '
                 'countries, states, and cities',
-    doc='/swagger'
+    doc='/'
 )
 
 ENDPOINT_EP = '/endpoints'
