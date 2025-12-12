@@ -162,6 +162,20 @@ class Country(Resource):
         except Exception as e:
             return {'error': str(e)}, 500
 
+    @api.doc('update_country')
+    def put(self, country_id):
+        """
+        Update a specific country by ID
+        """
+        try:
+            data = request.get_json(force=True)
+            countries.update(country_id, data)
+            return {'message': 'Country updated successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
     @api.doc('delete_country')
     def delete(self, country_id):
         """
@@ -225,6 +239,20 @@ class State(Resource):
                 return state, 200
             else:
                 return {'error': 'State not found'}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('update_state')
+    def put(self, state_id):
+        """
+        Update a specific state by ID
+        """
+        try:
+            data = request.get_json(force=True)
+            states.update(state_id, data)
+            return {'message': 'State updated successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 400
         except Exception as e:
             return {'error': str(e)}, 500
 
@@ -294,6 +322,20 @@ class City(Resource):
         except Exception as e:
             return {'error': str(e)}, 500
 
+    @api.doc('update_city')
+    def put(self, city_id):
+        """
+        Update a specific city by ID
+        """
+        try:
+            data = request.get_json(force=True)
+            cities.update(city_id, data)
+            return {'message': 'City updated successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 400
+        except Exception as e:
+            return {'error': str(e)}, 500
+
     @api.doc('delete_city')
     def delete(self, city_id):
         """
@@ -358,6 +400,21 @@ class County(Resource):
                 return county, 200
             else:
                 return {'error': 'County not found'}, 404
+        except Exception as e:
+            return {'error': str(e)}, 500
+
+    @api.doc('update_county')
+    def put(self, county_id):
+        """
+        Update a specific county by ID
+        """
+        try:
+            data = request.get_json(force=True)
+            state_code = data.get('STATE_CODE') or data.get('state_code', '')
+            counties.update(county_id, state_code, data)
+            return {'message': 'County updated successfully'}, 200
+        except ValueError as e:
+            return {'error': str(e)}, 400
         except Exception as e:
             return {'error': str(e)}, 500
 
