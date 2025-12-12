@@ -5,6 +5,7 @@ from http.client import (
     NOT_FOUND,
     OK,
     SERVICE_UNAVAILABLE,
+    CREATED,
 )
 
 from unittest.mock import patch
@@ -25,3 +26,348 @@ def test_hello():
     resp = TEST_CLIENT.get(ep.HELLO_EP)
     resp_json = resp.get_json()
     assert ep.HELLO_RESP in resp_json
+
+def test_get_all_countries():
+    """Test GET /countries endpoint"""
+    resp = TEST_CLIENT.get('/countries')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'countries' in resp_json
+    assert isinstance(resp_json['countries'], list)
+
+
+def test_get_all_states():
+    """Test GET /states endpoint"""
+    resp = TEST_CLIENT.get('/states')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'states' in resp_json
+    assert isinstance(resp_json['states'], list)
+
+
+def test_get_all_cities():
+    """Test GET /cities endpoint"""
+    resp = TEST_CLIENT.get('/cities')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'cities' in resp_json
+    assert isinstance(resp_json['cities'], list)
+
+
+def test_get_all_counties():
+    """Test GET /counties endpoint"""
+    resp = TEST_CLIENT.get('/counties')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'counties' in resp_json
+    assert isinstance(resp_json['counties'], list)
+
+
+def test_create_country():
+    """Test POST /countries endpoint"""
+    country_data = {
+        'name': 'Test Country',
+        'population': 1000000,
+        'contentient': 'Test Continent',
+        'capital': 'Test Capital',
+        'gdp': '1.5 trillion USD',
+        'area': '500,000 sq mi',
+        'founded': '2000',
+        'president': 'Test President'
+    }
+    resp = TEST_CLIENT.post('/countries', json=country_data)
+    assert resp.status_code == CREATED
+    resp_json = resp.get_json()
+    assert 'id' in resp_json
+    assert 'message' in resp_json
+
+
+def test_create_state():
+    """Test POST /states endpoint"""
+    state_data = {
+        'name': 'Test State',
+        'population': 5000000,
+        'capital': 'Test Capital',
+        'governor': 'Test Governor',
+        'country_code': 'US',
+        'code': 'TS'
+    }
+    resp = TEST_CLIENT.post('/states', json=state_data)
+    assert resp.status_code == CREATED
+    resp_json = resp.get_json()
+    assert 'id' in resp_json
+    assert 'message' in resp_json
+
+
+def test_create_city():
+    """Test POST /cities endpoint"""
+    city_data = {
+        'name': 'Test City',
+        'population': '100,000',
+        'state': 'Test State',
+        'state_code': 'TS',
+        'area': '50 sq mi',
+        'founded': '1950',
+        'mayor': 'Test Mayor'
+    }
+    resp = TEST_CLIENT.post('/cities', json=city_data)
+    assert resp.status_code == CREATED
+    resp_json = resp.get_json()
+    assert 'id' in resp_json
+    assert 'message' in resp_json
+
+
+def test_create_county():
+    """Test POST /counties endpoint"""
+    county_data = {
+        'name': 'Test County',
+        'population': 2000000,
+        'state': 'Test State',
+        'area': '1,000 sq mi',
+        'founded': '1900',
+        'county_seat': 'Test City'
+    }
+    resp = TEST_CLIENT.post('/counties', json=county_data)
+    assert resp.status_code == CREATED
+    resp_json = resp.get_json()
+    assert 'id' in resp_json
+    assert 'message' in resp_json
+
+
+def test_create_country_bad_data():
+    """Test POST /countries with invalid data (missing required field)"""
+    bad_data = {
+        'name': 'Test Country'
+        # Missing required fields
+    }
+    resp = TEST_CLIENT.post('/countries', json=bad_data)
+    assert resp.status_code == BAD_REQUEST
+    resp_json = resp.get_json()
+    assert 'error' in resp_json
+
+
+def test_create_state_bad_data():
+    """Test POST /states with invalid data"""
+    bad_data = {
+        'name': 'Test State',
+        'population': 'not a number'
+    }
+    resp = TEST_CLIENT.post('/states', json=bad_data)
+    assert resp.status_code == BAD_REQUEST
+    resp_json = resp.get_json()
+    assert 'error' in resp_json
+
+
+@patch('countries.queries_countries.read')
+def test_get_single_country(mock_read):
+    """Test GET /countries/<id> endpoint"""
+    mock_read.return_value = {
+        'id': 'test-id',
+        'name': 'Test Country',
+        'population': 1000000
+    }
+    resp = TEST_CLIENT.get('/countries/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'name' in resp_json
+
+
+@patch('countries.queries_countries.read')
+def test_get_single_country_not_found(mock_read):
+    """Test GET /countries/<id> with non-existent ID"""
+    mock_read.return_value = None
+    resp = TEST_CLIENT.get('/countries/nonexistent-id')
+    assert resp.status_code == NOT_FOUND
+    resp_json = resp.get_json()
+    assert 'error' in resp_json
+
+
+@patch('states.queries_states.read')
+def test_get_single_state(mock_read):
+    """Test GET /states/<id> endpoint"""
+    mock_read.return_value = {
+        'id': 'test-id',
+        'name': 'Test State',
+        'population': 5000000
+    }
+    resp = TEST_CLIENT.get('/states/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'name' in resp_json
+
+
+@patch('cities.queries_cities.read')
+def test_get_single_city(mock_read):
+    """Test GET /cities/<id> endpoint"""
+    mock_read.return_value = {
+        'id': 'test-id',
+        'name': 'Test City',
+        'population': '100,000'
+    }
+    resp = TEST_CLIENT.get('/cities/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'name' in resp_json
+
+
+@patch('counties.queries_counties.read')
+def test_get_single_county(mock_read):
+    """Test GET /counties/<id> endpoint"""
+    mock_read.return_value = {
+        'id': 'test-id',
+        'name': 'Test County',
+        'population': 2000000
+    }
+    resp = TEST_CLIENT.get('/counties/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'name' in resp_json
+
+
+@patch('countries.queries_countries.update')
+def test_update_country(mock_update):
+    """Test PUT /countries/<id> endpoint"""
+    mock_update.return_value = 1
+    update_data = {
+        'population': 2000000,
+        'president': 'New President'
+    }
+    resp = TEST_CLIENT.put('/countries/test-id', json=update_data)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+    assert resp_json['message'] == 'Country updated successfully'
+
+
+@patch('countries.queries_countries.update')
+def test_update_country_not_found(mock_update):
+    """Test PUT /countries/<id> with non-existent ID"""
+    mock_update.side_effect = ValueError('Country not found: test-id')
+    update_data = {'population': 2000000}
+    resp = TEST_CLIENT.put('/countries/nonexistent-id', json=update_data)
+    assert resp.status_code == BAD_REQUEST
+    resp_json = resp.get_json()
+    assert 'error' in resp_json
+
+
+@patch('states.queries_states.update')
+def test_update_state(mock_update):
+    """Test PUT /states/<id> endpoint"""
+    mock_update.return_value = 1
+    update_data = {
+        'population': 6000000,
+        'governor': 'New Governor'
+    }
+    resp = TEST_CLIENT.put('/states/test-id', json=update_data)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+
+
+@patch('cities.queries_cities.update')
+def test_update_city(mock_update):
+    """Test PUT /cities/<id> endpoint"""
+    mock_update.return_value = 1
+    update_data = {
+        'population': '200,000',
+        'mayor': 'New Mayor'
+    }
+    resp = TEST_CLIENT.put('/cities/test-id', json=update_data)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+
+
+@patch('counties.queries_counties.update')
+def test_update_county(mock_update):
+    """Test PUT /counties/<id> endpoint"""
+    mock_update.return_value = 1
+    update_data = {
+        'population': 3000000,
+        'STATE_CODE': 'CA',
+        'county_seat': 'New Seat'
+    }
+    resp = TEST_CLIENT.put('/counties/test-id', json=update_data)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+
+
+@patch('countries.queries_countries.delete')
+def test_delete_country(mock_delete):
+    """Test DELETE /countries/<id> endpoint"""
+    mock_delete.return_value = 1
+    resp = TEST_CLIENT.delete('/countries/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+    assert resp_json['message'] == 'Country deleted successfully'
+
+
+@patch('countries.queries_countries.delete')
+def test_delete_country_not_found(mock_delete):
+    """Test DELETE /countries/<id> with non-existent ID"""
+    mock_delete.side_effect = ValueError('Country not found: test-id')
+    resp = TEST_CLIENT.delete('/countries/nonexistent-id')
+    assert resp.status_code == NOT_FOUND
+    resp_json = resp.get_json()
+    assert 'error' in resp_json
+
+
+@patch('states.queries_states.delete')
+def test_delete_state(mock_delete):
+    """Test DELETE /states/<id> endpoint"""
+    mock_delete.return_value = 1
+    resp = TEST_CLIENT.delete('/states/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+
+
+@patch('cities.queries_cities.delete')
+def test_delete_city(mock_delete):
+    """Test DELETE /cities/<id> endpoint"""
+    mock_delete.return_value = 1
+    resp = TEST_CLIENT.delete('/cities/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+
+
+@patch('counties.queries_counties.delete')
+def test_delete_county(mock_delete):
+    """Test DELETE /counties/<id> endpoint"""
+    mock_delete.return_value = 1
+    resp = TEST_CLIENT.delete('/counties/test-id')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+
+
+def test_stats_endpoint():
+    """Test GET /stats endpoint"""
+    resp = TEST_CLIENT.get('/stats')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'countries' in resp_json
+    assert 'states' in resp_json
+    assert 'cities' in resp_json
+    assert 'counties' in resp_json
+
+
+def test_health_endpoint():
+    """Test GET /health endpoint"""
+    resp = TEST_CLIENT.get('/health')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'status' in resp_json
+    assert resp_json['status'] == 'ok'
+
+
+def test_endpoints_list():
+    """Test GET /endpoints endpoint"""
+    resp = TEST_CLIENT.get('/endpoints')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'Available endpoints' in resp_json
+    assert isinstance(resp_json['Available endpoints'], list)
