@@ -22,8 +22,8 @@ MONGO_ID = '_id'
 
 MIN_ID_LEN = 4
 
-user_nm = os.getenv('MONGO_USER_NM', 'datamixmaster')
-cloud_svc = os.getenv('MONGO_HOST', 'datamixmaster.26rvk.mongodb.net')
+user_nm = os.getenv('MONGO_USER_NM')
+cloud_svc = os.getenv('MONGO_HOST')
 passwd = os.environ.get("MONGO_PASSWD", '')
 cloud_mdb = "mongodb+srv"
 db_params = "retryWrites=false&w=majority"
