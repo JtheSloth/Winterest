@@ -18,6 +18,8 @@ client = None
 
 MONGO_ID = '_id'
 
+MIN_ID_LEN = 4
+
 user_nm = os.getenv('MONGO_USER_NM', 'datamixmaster')
 cloud_svc = os.getenv('MONGO_HOST', 'datamixmaster.26rvk.mongodb.net')
 passwd = os.environ.get("MONGO_PASSWD", '')
@@ -180,3 +182,11 @@ def fetch_all_as_dict(key, collection, db=SE_DB):
         del doc[MONGO_ID]
         ret[doc[key]] = doc
     return ret
+
+def is_valid_id(_id: str) -> bool:
+    if not isinstance(_id, str):
+        return False
+    if len(_id) < MIN_ID_LEN:
+        return False
+    return True
+
