@@ -9,6 +9,8 @@ import pymongo as pm
 from functools import wraps
 from pymongo.errors import AutoReconnect, NetworkTimeout
 
+import certifi 
+
 LOCAL = "0"
 CLOUD = "1"
 
@@ -91,10 +93,14 @@ def connect_db():
             if not password:
                 raise ValueError('You must set your password '
                                  + 'to use Mongo in the cloud.')
-            client = pm.MongoClient(f'{cloud_mdb}//{user_nm}:{password}'
-                                    + f'{cloud_svc}'
-                                    + '?{db_param}')
+            print('Connecting to Mongo in the cloud.')
+            client = pm.MongoClient(f"mongodb+srv://{user_nm}:{password}@{cloud_svc}/"
+                                    f"{SE_DB}?{db_params}",
+                                    tlsCAFile=certifi.where())
+            client.admin.command("ping")
+            print("MongoDB ping successful")
         else:
+            print("Connecting to Mongo locally.")
             client = pm.MongoClient()
     return client
 
