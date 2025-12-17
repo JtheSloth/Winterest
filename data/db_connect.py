@@ -96,7 +96,7 @@ def connect_db():
             print('Connecting to Mongo in the cloud.')
             client = pm.MongoClient(f"mongodb+srv://{user_nm}:{password}@{cloud_svc}/"
                                     f"{SE_DB}?{db_params}",
-                                    tlsCAFile=certifi.where())
+                                    tlsCAFile=certifi.where(), **PA_SETTINGS)
             client.admin.command("ping")
             print("MongoDB ping successful")
         else:
