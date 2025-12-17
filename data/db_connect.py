@@ -22,8 +22,8 @@ MONGO_ID = '_id'
 
 MIN_ID_LEN = 4
 
-user_nm = os.getenv('MONGO_USER_NM')
-cloud_svc = os.getenv('MONGO_HOST')
+user_nm = os.getenv('MONGO_USER_NM', 'mattiasshularsson_db_user')
+cloud_svc = os.getenv('MONGO_HOST', 'cluster0.nbhhiox.mongodb.net')
 passwd = os.environ.get("MONGO_PASSWD", '')
 cloud_mdb = "mongodb+srv"
 db_params = "retryWrites=false&w=majority"
@@ -94,8 +94,9 @@ def connect_db():
                 raise ValueError('You must set your password '
                                  + 'to use Mongo in the cloud.')
             print('Connecting to Mongo in the cloud.')
-            client = pm.MongoClient(f"mongodb+srv://{user_nm}:{password}@{cloud_svc}/"
-                                    f"{SE_DB}?{db_params}",
+            client = pm.MongoClient(f'{cloud_mdb}://{user_nm}:{password}'
+                                    + f'@{cloud_svc}/{SE_DB}'
+                                    + f'?{db_params}',
                                     tlsCAFile=certifi.where(), **PA_SETTINGS)
             client.admin.command("ping")
             print("MongoDB ping successful")
