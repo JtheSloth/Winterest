@@ -27,8 +27,11 @@ def test_hello():
     resp_json = resp.get_json()
     assert ep.HELLO_RESP in resp_json
 
-def test_get_all_countries():
+
+@patch('countries.queries_countries.read')
+def test_get_all_countries(mock_read):
     """Test GET /countries endpoint"""
+    mock_read.return_value = []
     resp = TEST_CLIENT.get('/countries')
     assert resp.status_code == OK
     resp_json = resp.get_json()
@@ -36,8 +39,10 @@ def test_get_all_countries():
     assert isinstance(resp_json['countries'], list)
 
 
-def test_get_all_states():
+@patch('states.queries_states.read')
+def test_get_all_states(mock_read):
     """Test GET /states endpoint"""
+    mock_read.return_value = []
     resp = TEST_CLIENT.get('/states')
     assert resp.status_code == OK
     resp_json = resp.get_json()
@@ -45,8 +50,10 @@ def test_get_all_states():
     assert isinstance(resp_json['states'], list)
 
 
-def test_get_all_cities():
+@patch('cities.queries_cities.read')
+def test_get_all_cities(mock_read):
     """Test GET /cities endpoint"""
+    mock_read.return_value = []
     resp = TEST_CLIENT.get('/cities')
     assert resp.status_code == OK
     resp_json = resp.get_json()
@@ -54,17 +61,21 @@ def test_get_all_cities():
     assert isinstance(resp_json['cities'], list)
 
 
-def test_get_all_counties():
+@patch('counties.queries_counties.read')
+def test_get_all_counties(mock_read):
     """Test GET /counties endpoint"""
+    mock_read.return_value = []
     resp = TEST_CLIENT.get('/counties')
     assert resp.status_code == OK
     resp_json = resp.get_json()
     assert 'counties' in resp_json
     assert isinstance(resp_json['counties'], list)
 
-
-def test_create_country():
+@patch('countries.queries_countries.create')
+def test_create_country(mock_create):
     """Test POST /countries endpoint"""
+    mock_create.return_value = 'test-id'
+
     country_data = {
         'name': 'Test Country',
         'population': 1000000,
@@ -82,8 +93,10 @@ def test_create_country():
     assert 'message' in resp_json
 
 
-def test_create_state():
+@patch('states.queries_states.create')
+def test_create_state(mock_create):
     """Test POST /states endpoint"""
+    mock_create.return_value = 'test-id'
     state_data = {
         'name': 'Test State',
         'population': 5000000,
@@ -99,8 +112,10 @@ def test_create_state():
     assert 'message' in resp_json
 
 
-def test_create_city():
+@patch('cities.queries_cities.create')
+def test_create_city(mock_create):
     """Test POST /cities endpoint"""
+    mock_create.return_value = 'test-id'
     city_data = {
         'name': 'Test City',
         'population': '100,000',
@@ -117,8 +132,10 @@ def test_create_city():
     assert 'message' in resp_json
 
 
-def test_create_county():
+@patch('counties.queries_counties.create')
+def test_create_county(mock_create):
     """Test POST /counties endpoint"""
+    mock_create.return_value = 'test-id'
     county_data = {
         'name': 'Test County',
         'population': 2000000,
@@ -344,8 +361,18 @@ def test_delete_county(mock_delete):
     assert 'message' in resp_json
 
 
-def test_stats_endpoint():
+@patch('countries.queries_countries.read')
+@patch('states.queries_states.read')
+@patch('cities.queries_cities.read')
+@patch('counties.queries_counties.read')
+def test_stats_endpoint(
+        mock_counties, mock_cities, mock_states, mock_countries):
     """Test GET /stats endpoint"""
+    mock_countries.return_value = []
+    mock_states.return_value = []
+    mock_cities.return_value = []
+    mock_counties.return_value = []
+
     resp = TEST_CLIENT.get('/stats')
     assert resp.status_code == OK
     resp_json = resp.get_json()
